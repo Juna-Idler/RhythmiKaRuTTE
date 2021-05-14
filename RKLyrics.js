@@ -39,25 +39,7 @@ class KaraokeUnit
 
     static Create(text,split)
     {
-        const elements = [];
-        const head = text.match(/^\[(\d+):(\d+)[:.](\d+)\]/);
-        if (head)
-        {
-            const ttelements = text.match(/\[\d+:\d+[:.]\d+\].*?((?=\[\d+:\d+[:.]\d+\])|$)/g);
-//            const ttelements = text.match(/\[\d+:\d+[:.]\d+\][^\[]*/g);
-            ttelements.forEach(tte => {
-                elements.push(TimeTagElement.Create(tte));
-            });
-        }
-        else
-        {
-            const ttelements = ("[00:00.00]" + text).match(/\[\d+:\d+[:.]\d+\].*?((?=\[\d+:\d+[:.]\d+\])|$)/g);
-            ttelements.forEach(tte => {
-                elements.push(TimeTagElement.Create(tte));
-            });
-            elements[0].start_time = -1;
-        }
-
+        const elements = KaraokeUnit.Parse(text);
         const this_text_array = [];
         elements.forEach(e=>{
             const text_array = split(e.text);
@@ -83,6 +65,24 @@ class KaraokeUnit
     }
     get start_time(){return this.start_times[0];}
     get end_time(){return this.end_times[this.end_times.length-1];}
+
+    static Parse(text)
+    {
+        const elements = [];
+        const head = text.match(/^\[(\d+):(\d+)[:.](\d+)\]/);
+        if (head)
+        {
+            const ttelements = text.match(/\[\d+:\d+[:.]\d+\].*?((?=\[\d+:\d+[:.]\d+\])|$)/g);
+            ttelements.forEach(tte => {elements.push(TimeTagElement.Create(tte));});
+        }
+        else
+        {
+            const ttelements = ("[00:00.00]" + text).match(/\[\d+:\d+[:.]\d+\].*?((?=\[\d+:\d+[:.]\d+\])|$)/g);
+            ttelements.forEach(tte => {elements.push(TimeTagElement.Create(tte));});
+            elements[0].start_time = -1;
+        }
+        return elements;
+    }
 }
 
 //ルビ付き（かもしれない）カラオケタイムタグ付き文字列
@@ -236,8 +236,11 @@ class RubyKaraokeLyricsLine
                     KaraokeUnit.Create(ruby_units[i].base,split),
                     ruby_units[i].hasRuby ? KaraokeUnit.Create(ruby_units[i].ruby,split) : null));
         }
+        const array = KaraokeUnit.Parse(textline);
+        this.start_time =  (array[0].start_time >= 0 && array[0].text === "") ? array[0].start_time : -1;
+        this.end_time = (array.length > 1 && array[array.length-1].text === "" && array[array.length-2].text === "") ?
+                        array[array.length-1].start_time : -1;
     }
-
 }
 
 class RubyKaraokeLyricsContainer

@@ -9,6 +9,7 @@ RhytimicalにKaraoke(with Ruby)TimeTagをEditする
     html,body{
         height :100%;
         margin:0;
+        font-size: 100%;
     }
     button, input, select, textarea {
         font-family : inherit;
@@ -28,37 +29,54 @@ RhytimicalにKaraoke(with Ruby)TimeTagをEditする
         background-color: #002200;
         color: white;
         position: relative;
+        user-select: none;
     }
-
+    #TagPointList
+    {
+        margin-left: 1.0rem;
+        font-size: 1.2rem;
+        list-style-type: decimal-leading-zero;
+    }
     .PointLine{
-        height: 2.5em;;
-        margin: 2px 0px;
+        line-height: 2.0;
+        margin: 0px;
+        border-bottom: 1px solid gray;
     }
-    .PointChar{
-        margin: 2px 2px;
-        padding-left: 1px;
-
+    .PointChar,.PointHead,.PointTail
+    {
+        margin: 0px;
+        padding-left: 0px;
+        padding-bottom: 0.5rem;
+        cursor:default;
     }
-    .PointChar[data-start_time]::before{
+    .PointChar::before{
         content: "[";
-        color: #888888;
     }
-    .PointChar[data-start_time="-1"]::before{
-        color:transparent;
-    }
-    .PointChar[data-end_time]::after{
+    .PointChar::after{
         content: "]";
-        color: #888888;
-
     }
-    .PointChar[data-end_time="-1"]::after{
+
+    .PointBefore::before,.PointAfter::after,
+    .PointHead.PointBefore,.PointTail.PointAfter
+    {
+        color: #888888;
+    }
+    .UpPointBefore::before,.UpPointAfter::after,
+    .PointHead.UpPointBefore,.PointTail.UpPointAfter
+    {
+        color: #FFFF00;
+    }
+    .NotPointBefore::before,.NotPointAfter::after,
+    .PointHead.NotPointBefore,.PointTail.NotPointAfter
+    {
         color: transparent;
     }
 
     #TagPointCursor{
         color: #FF0000;
         position: absolute;
-        font-size: 10px;
+        font-size: 0.5rem;
+        cursor:default;
     }
 
 </style>
@@ -74,7 +92,7 @@ RhytimicalにKaraoke(with Ruby)TimeTagをEditする
     </div>
 
 <textarea id="TestText">
-[00:00.00]
+[00:00.00][00:00.10]
 [00:09.66]た[00:09.85]だ[00:10.42]｜風《[00:10.42]か[00:10.59]ぜ[00:11.15]》[00:11.15]に[00:11.35]｜揺《[00:11.35]ゆ[00:11.58]》[00:11.58]ら[00:11.78]れ[00:11.98]て[00:12.42]
 [00:12.70]｜何《[00:12.70]な[00:12.88]に[00:13.05]》[00:13.05]も[00:13.27]｜考《[00:13.27]か[00:13.47]ん[00:13.84]が[00:14.22]》[00:14.22]え[00:14.54]ず[00:14.78]に[00:15.35]
 [00:15.77]た[00:15.94]だ[00:16.50]｜雲《[00:16.50]く[00:16.69]も[00:17.10]》[00:17.10]を[00:17.45]｜眺《[00:17.45]な[00:17.65]が[00:17.82]》[00:17.82]め[00:18.02]て[00:18.59]
