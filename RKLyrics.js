@@ -65,6 +65,7 @@ class KaraokeUnit
     }
     get start_time(){return this.start_times[0];}
     get end_time(){return this.end_times[this.end_times.length-1];}
+    get text(){return this.text_array.join("");}
 
     static Parse(text)
     {

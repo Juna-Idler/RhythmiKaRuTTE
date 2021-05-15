@@ -2,9 +2,6 @@
 <html>
 <meta charset="utf-8">
 <title>RhythmiKaRuTTE</title>
-RhytimicalにKaraoke(with Ruby)TimeTagをEditする
-
-
 <style>
     html,body{
         height :100%;
@@ -22,18 +19,95 @@ RhytimicalにKaraoke(with Ruby)TimeTagをEditする
         height :100%;
         padding:2px;
         box-sizing: border-box;
-
     }
+
+    #TabLabels
+    {
+        flex: 0 1 auto;
+        padding-top: 2px;
+        border-bottom: 0px solid #999999;
+    }
+    input[name="mode_tab"]
+    {
+        display: none;
+    }
+    .TabContent{
+        display: none;
+    }
+    .tab_label
+    {
+        padding: 0px 8px;
+        margin:0px 8px;
+        border: 1px solid #000000;
+        border-bottom: 4px solid #BBBBBB;
+        border-top: 4px solid #eeeeee;
+        background-color: #dddddd;
+    }
+    #TabEdit:checked ~ * #TabEditLabel ,
+    #TabStamp:checked ~ * #TabStampLabel ,
+    #TabPoint:checked ~ * #TabPointLabel
+    {
+        background-color: #999999;
+        color: #fff;
+    }
+    #TabEdit:checked ~ #TextEdit ,
+    #TabPoint:checked ~ #TagPoint ,
+    #TabStamp:checked ~ #TagStamp
+    {
+        display:flex;
+    }
+
+    #TextEdit
+    {
+        height :100%;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }    
+    #TextArea
+    {
+        height: 115%;
+        resize:none;
+        flex:1 1 auto;
+        margin: 4px;
+        padding: 4px;
+    }
+    .bottom_controls_area
+    {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;        
+        flex:0 0 auto;
+    }
+    .bottom_controls
+    {
+        margin :0px 8px;
+    }
+
+
     #TagPoint
     {
-        background-color: #002200;
-        color: white;
-        position: relative;
+        flex-direction: column;
+
+        height: 100%;
+        flex: 1 1 auto;
+
         user-select: none;
+        overflow-y :hidden;
+
+    }
+    #TagPointListScroll
+    {
+        flex:1 1 auto;
+        overflow-y :scroll;
+        position: relative;
+        margin-bottom: 2px;
+        border: solid 1px black;
+        background-color: #002200;
     }
     #TagPointList
     {
-        margin-left: 1.0rem;
+        color: white;
+        margin:0;
         font-size: 1.2rem;
         list-style-type: decimal-leading-zero;
     }
@@ -85,14 +159,44 @@ RhytimicalにKaraoke(with Ruby)TimeTagをEditする
 <body>
 <div id="Screen">
 
-    <div id="TagPoint">
-        <ol id="TagPointList">
+    <input type="radio" id="TabEdit" name="mode_tab">
+    <input type="radio" id="TabPoint" name="mode_tab" checked>
+    <input type="radio" id="TabStamp" name="mode_tab">
+    <div id="TabLabels">
+        <label for="TabEdit" id="TabEditLabel" class="tab_label">TextEdit</label>
+        <label for="TabPoint" id="TabPointLabel" class="tab_label">TagPoint</label>
+        <label for="TabStamp" id=TabStampLabel class="tab_label">TagStamp</label>
+    </div>
+    <div id="TextEdit" class="TabContent">
+        <textarea id="TextArea" spellcheck="false"></textarea>
+        <div class="bottom_controls_area">
+            <button id="OutputText" type="button" class="bottom_controls">出力</button>
+            <label><input type="checkbox" id="AutoSave" class="bottom_controls">オートセーブ</label>
+        </div>
+    </div>
+    <div id="TagPoint" class="TabContent">
+        <div id="TagPointListScroll">
+            <ol id="TagPointList">
+            </ol>
+            <div id="TagPointCursor">▲</div>
+        </div>
+        <div class="bottom_controls_area">
+            <button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
+        </div>
+    </div>
+    <div id="TagStamp" class="TabContent">
+        <ol id="StampList">
         </ol>
-        <div id="TagPointCursor">▲</div>
     </div>
 
-<textarea id="TestText">
-[00:00.00][00:00.10]
+
+</div>
+
+
+
+    <script>
+document.getElementById("TextArea").value = `
+[00:00.00]
 [00:09.66]た[00:09.85]だ[00:10.42]｜風《[00:10.42]か[00:10.59]ぜ[00:11.15]》[00:11.15]に[00:11.35]｜揺《[00:11.35]ゆ[00:11.58]》[00:11.58]ら[00:11.78]れ[00:11.98]て[00:12.42]
 [00:12.70]｜何《[00:12.70]な[00:12.88]に[00:13.05]》[00:13.05]も[00:13.27]｜考《[00:13.27]か[00:13.47]ん[00:13.84]が[00:14.22]》[00:14.22]え[00:14.54]ず[00:14.78]に[00:15.35]
 [00:15.77]た[00:15.94]だ[00:16.50]｜雲《[00:16.50]く[00:16.69]も[00:17.10]》[00:17.10]を[00:17.45]｜眺《[00:17.45]な[00:17.65]が[00:17.82]》[00:17.82]め[00:18.02]て[00:18.59]
@@ -122,11 +226,8 @@ RhytimicalにKaraoke(with Ruby)TimeTagをEditする
 @Ruby_Parent=｜
 @Ruby_Begin=《
 @Ruby_End=》
-
-</textarea>
-</div>
-
-
+`;
+    </script>
 
     <script type='text/javascript' src='RKLyrics.js' defer></script>
     <script type='text/javascript' src='index.js' defer></script>

@@ -1,5 +1,5 @@
 
-const textarea = document.getElementById("TestText");
+const textarea = document.getElementById("TextArea");
 
 //今はクロームしか対応してないらしいけどこれで書記素で分割出来るらしい
 const segmenter = new Intl.Segmenter("ja", {granularity: "grapheme"});
@@ -13,6 +13,10 @@ function grapheme_split(text)
     return array;
 }
 var lyrics = new RubyKaraokeLyricsContainer(textarea.value,grapheme_split);
+
+
+
+(function TagPoint(){
 
 
 const list = document.getElementById("TagPointList");
@@ -56,6 +60,25 @@ function MoveCursor()
     line.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"})
 }
 
+function textOnClick(e)
+{
+    const li = e.currentTarget.parentElement;
+    const chars = li.querySelectorAll(".PointChar");
+    const rect = e.currentTarget.getBoundingClientRect();
+    let after = (e.clientX - rect.left > rect.width / 2) ? 1 : 0;
+    let i;
+    for (i = 0;i < chars.length;i++)
+        if (chars[i] === e.currentTarget)
+            break;
+    currentTTPos = i * 2 + 1 + after;
+    for (i = 0;i < list.children.length;i++)
+        if (list.children[i] === li)
+            break;
+    currentLine = i;
+    MoveCursor();
+}
+
+
 lyrics.lines.forEach(line=>{
 
     const li = document.createElement("li");
@@ -95,39 +118,52 @@ lyrics.lines.forEach(line=>{
     li.appendChild(linehead);
 
 
-    line.units.forEach(runit=>{
-        const  kunit = runit.hasRuby ? runit.ruby : runit.base;
-        for (let i = 0;i < kunit.text_array.length;i++)
+    line.units.forEach(rkunit=>{
+        if (rkunit.hasRuby)
         {
-            const text = document.createElement("span");
-            text.textContent = kunit.text_array[i];
-            text.classList.add("PointChar")
-            text.dataset.start_time = kunit.start_times[i];
-            text.dataset.end_time = kunit.end_times[i];
+            const ruby = document.createElement("ruby");
+            const rt = document.createElement("rt");
+            rt.textContent = rkunit.base.text;
 
-            const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
-            text.classList.add(before);
-            const after = (kunit.end_times[i] < 0) ? "NotPointAfter" : "PointAfter";
-            text.classList.add(after);
+            const kunit = rkunit.ruby;
+            for (let i = 0;i < kunit.text_array.length;i++)
+            {
+                const text = document.createElement("span");
+                text.textContent = kunit.text_array[i];
+                text.classList.add("PointChar")
+                text.dataset.start_time = kunit.start_times[i];
+                text.dataset.end_time = kunit.end_times[i];
 
-            text.onclick = (e)=>{
-                const li = e.currentTarget.parentElement;
-                const chars = li.querySelectorAll(".PointChar");
+                const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
+                text.classList.add(before);
+                const after = (kunit.end_times[i] < 0) ? "NotPointAfter" : "PointAfter";
+                text.classList.add(after);
 
-                let i;
-                for (i = 0;i < chars.length;i++)
-                    if (chars[i] === e.currentTarget)
-                        break;
-                const rect = e.currentTarget.getBoundingClientRect();
-                let after = (e.clientX - rect.left > rect.width / 2) ? 1 : 0;
-                currentTTPos = i * 2 + 1 + after;
-                for (i = 0;i < list.children.length;i++)
-                    if (list.children[i] === li)
-                        break;
-                currentLine = i;
-                MoveCursor();
-            };
-            li.appendChild(text);
+                text.onclick = textOnClick;
+                ruby.appendChild(text);
+            }
+            ruby.appendChild(rt);
+            li.appendChild(ruby);
+        }
+        else
+        {
+            const kunit = rkunit.base;
+            for (let i = 0;i < kunit.text_array.length;i++)
+            {
+                const text = document.createElement("span");
+                text.textContent = kunit.text_array[i];
+                text.classList.add("PointChar")
+                text.dataset.start_time = kunit.start_times[i];
+                text.dataset.end_time = kunit.end_times[i];
+
+                const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
+                text.classList.add(before);
+                const after = (kunit.end_times[i] < 0) ? "NotPointAfter" : "PointAfter";
+                text.classList.add(after);
+
+                text.onclick = textOnClick;
+                li.appendChild(text);
+            }
         }
     });
     const linetail = document.createElement("span");
@@ -151,9 +187,6 @@ lyrics.lines.forEach(line=>{
 
 currentLine = 3;
 MoveCursor();
-
-//querySelector
-//querySelectorAll
 
 
 
@@ -291,4 +324,130 @@ function keydown(e)
 
 document.addEventListener("keydown",keydown,false);
 
+
+function CheckBeforeOn(element,flag)
+{
+    if (flag)
+    {
+        element.classList.remove("UpPointBefore");
+        element.classList.remove("NotPointBefore");
+        element.classList.add("PointBefore");
+    }
+    else
+    {
+        element.classList.remove("UpPointBefore");
+        element.classList.add("NotPointBefore");
+        element.classList.remove("PointBefore");
+    }
+}
+function CheckAfterOn(element,flag,up = false)
+{
+    if (flag)
+    {
+        element.classList.remove("NotPointAfter");
+        element.classList.add("PointAfter");
+        element.classList.toggle("UpPointAfter",up);
+    }
+    else
+    {
+        element.classList.remove("UpPointAfter");
+        element.classList.add("NotPointAfter");
+        element.classList.remove("PointAfter");
+    }
+}
+
+function isWhiteSpace(c)
+{
+    return c.match(/^\s$/) !== null;
+}
+function isAlphabet(c)
+{
+    return c.match(/^[a-zA-Zａ-ｚＡ-Ｚ]$/) !== null;
+}
+function isASCIISymbol( c )
+{
+    return c.match(/^[!"#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~]$/) !== null;
+}
+function isNumber(c)
+{
+    return c.match(/^[0-9０-９]$/) !== null;
+}
+
+
+document.getElementById("AutoPointing").onclick = (e)=>{
+
+    for (let i = 0;i < list.children.length;i++)
+    {
+        const line = list.children[i];
+        const chars = line.querySelectorAll(".PointChar");
+
+        if (chars.length == 0)//空行
+        {
+            const flag = true;//空行にチェックするフラグ
+            CheckBeforeOn(line.firstElementChild,flag);
+            CheckAfterOn(line.lastElementChild,false);//行末は基本無し
+            continue;
+        }
+        CheckBeforeOn(line.firstElementChild,false);//行頭も基本は無し
+        CheckAfterOn(line.lastElementChild,false);//行末は基本無し
+        
+    //空白文字以外の行頭文字は問答無用でチェック
+        if (!isWhiteSpace(chars[0].textContent))
+            CheckBeforeOn(chars[0],true);
+
+        for (let j = 1;j < chars.length;j++)
+        {
+            const char = chars[j];
+            const pc = chars[j-1].textContent;
+
+            if (isWhiteSpace( char.textContent ))
+            {
+                //空白前設定があれば
+                CheckBeforeOn(char,false);
+            }
+            else if (isAlphabet(char.textContent) || isNumber( char.textContent ) || isASCIISymbol( char.textContent ))
+            {
+                if ( isAlphabet( pc ) || isNumber( pc ) || isASCIISymbol( pc ) )
+                {
+                    CheckBeforeOn(char,false);
+                }
+                else
+                {
+                    CheckBeforeOn(char,true);
+                }
+            }
+            else
+            {
+                switch ( char.textContent )
+                {
+                case 'ゃ':case 'ゅ':case 'ょ':
+                case 'ャ':case 'ュ':case 'ョ':
+                case 'ぁ':case 'ぃ':case 'ぅ':case 'ぇ':case 'ぉ':
+                case 'ァ':case 'ィ':case 'ゥ':case 'ェ':case 'ォ':
+                case 'ー':case '～':
+                    CheckBeforeOn(char,false);
+                    break;
+                case 'ん':
+                    CheckBeforeOn(char,true);
+                    break;
+                case 'っ':
+                    CheckBeforeOn(char,true);
+                    break;
+                default:
+                    CheckBeforeOn(char,true);
+                    break;
+                }
+            }
+            CheckAfterOn(char,false);//後ろは基本的に付けない
+
+        }
+        if (!isWhiteSpace(chars[chars.length-1].textContent))
+        {
+            CheckAfterOn(chars[chars.length-1],true,true);
+        }
+    }
+}
+
+
+}());
 
