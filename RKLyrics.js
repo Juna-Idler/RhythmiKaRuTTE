@@ -1,40 +1,53 @@
+
+//編集用特殊パラメータ付与可能タイムタグ
+
 class TimeTagElement
 {
     static Create(text)
     {
-        let match = text.match(/^\[(\d+):(\d+)[:.](\d+)\](.*)$/);
+        let match = text.match(/^\[(\d+):(\d+)[:.](\d+)(;[^\]]*)?\](.*)$/);
         if (match)
         {
             const second = parseFloat(match[2] + '.' + match[3]);
             const this_start_time = (match[1] * 60000 + second * 1000) | 0;
-            return new TimeTagElement(this_start_time,match[4]);
+            return new TimeTagElement(this_start_time,match[5],match[4] == null ? "" : match[4]);
         }
         return new TimeTagElement(-1,text);
     }
-    constructor(start_time,text)
+    constructor(start_time,text,option = "")
     {
         this.text = text;
         this.start_time = start_time;
+        this.option = option;
     }
     toString()
     {
-        return TimeTagElement.TimeString(this.start_time) + this.text;
+        return TimeTagElement.TimeString_option(this.start_time,this.option) + this.text;
     }
     static TimeString(time_ms)
     {
         return time_ms < 0 ? "" : '[' + String(Math.floor(time_ms / 60000)).padStart(2,'0') +
                                   ':' + ('0' + (time_ms % 60000 / 1000).toFixed(2)).slice(-5) + ']';
     }
+    static TimeString_option(time_ms,option)
+    {
+        return time_ms < 0 ? "" : '[' + String(Math.floor(time_ms / 60000)).padStart(2,'0') +
+                                  ':' + ('0' + (time_ms % 60000 / 1000).toFixed(2)).slice(-5) +
+                                  (option ? (";" + option) : "") + ']';
+    }
+
+    static get MaxTime_ms() {return (99 * 60 + 59) * 1000 + 990;}
 }
 
 //カラオケタイムタグ文字列
 class KaraokeUnit
 {
-    constructor(text_array,start_times,end_times)
+    constructor(text_array,start_times,end_times,options)
     {
         this.text_array = text_array;
         this.start_times = start_times;
         this.end_times = end_times;
+        this.options = options;
     }
 
     static Create(text,split)
@@ -49,19 +62,25 @@ class KaraokeUnit
         
         let start_times = new Array(this_text_array.length + 2).fill(-1);
         let end_times = new Array(this_text_array.length + 2).fill(-1);
+        let options = new Array(this_text_array.length * 2 + 2).fill("");
         let text_pos = 1;
         for (let i = 0;i < elements.length;i++)
         {
             const e = elements[i];
             if (e.text_length > 0)
+            {
                 start_times[text_pos] = e.start_time;
+                options[text_pos * 2 - 1] = e.option;
+            }
             else if (end_times[text_pos - 1] < 0)
+            {
                 end_times[text_pos - 1] = e.start_time;
-
+                options[text_pos * 2 - 2] = e.option;
+            }
             text_pos += e.text_length;
         }
 
-        return new KaraokeUnit(this_text_array,start_times.slice(1,start_times.length-1),end_times.slice(1,end_times.length-1));
+        return new KaraokeUnit(this_text_array,start_times.slice(1,start_times.length-1),end_times.slice(1,end_times.length-1),options.slice(1,options.length-1));
     }
     get start_time(){return this.start_times[0];}
     get end_time(){return this.end_times[this.end_times.length-1];}
@@ -70,15 +89,15 @@ class KaraokeUnit
     static Parse(text)
     {
         const elements = [];
-        const head = text.match(/^\[(\d+):(\d+)[:.](\d+)\]/);
+        const head = text.match(/^\[(\d+):(\d+)[:.](\d+)(;[^\]]*)?\]/);
         if (head)
         {
-            const ttelements = text.match(/\[\d+:\d+[:.]\d+\].*?((?=\[\d+:\d+[:.]\d+\])|$)/g);
+            const ttelements = text.match(/\[\d+:\d+[:.]\d+(;[^\]]*)?\].*?((?=\[\d+:\d+[:.]\d+(;[^\]]*)?\])|$)/g);
             ttelements.forEach(tte => {elements.push(TimeTagElement.Create(tte));});
         }
         else
         {
-            const ttelements = ("[00:00.00]" + text).match(/\[\d+:\d+[:.]\d+\].*?((?=\[\d+:\d+[:.]\d+\])|$)/g);
+            const ttelements = ("[00:00.00]" + text).match(/\[\d+:\d+[:.]\d+(;[^\]]*)?\].*?((?=\[\d+:\d+[:.]\d+(;[^\]]*)?\])|$)/g);
             ttelements.forEach(tte => {elements.push(TimeTagElement.Create(tte));});
             elements[0].start_time = -1;
         }
@@ -241,6 +260,9 @@ class RubyKaraokeLyricsLine
         this.start_time =  (array[0].start_time >= 0 && array[0].text === "") ? array[0].start_time : -1;
         this.end_time = (array.length > 1 && array[array.length-1].text === "" && array[array.length-2].text === "") ?
                         array[array.length-1].start_time : -1;
+        this.start_option = this.start_time >= 0 ? array[0].option : "";
+        this.end_option = this.end_time >= 0 ? array[array.length-1].option : "";
+
     }
 }
 

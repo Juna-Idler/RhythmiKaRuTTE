@@ -120,13 +120,14 @@
     {
         margin: 0px;
         padding-left: 0px;
+        padding-top: 0.5rem;
         padding-bottom: 0.5rem;
         cursor:default;
     }
-    .PointChar::before{
+    .PointChar::before,.PointHead::before{
         content: "[";
     }
-    .PointChar::after{
+    .PointChar::after,.PointTail::after{
         content: "]";
     }
 
@@ -159,8 +160,8 @@
 <body>
 <div id="Screen">
 
-    <input type="radio" id="TabEdit" name="mode_tab">
-    <input type="radio" id="TabPoint" name="mode_tab" checked>
+    <input type="radio" id="TabEdit" name="mode_tab" checked>
+    <input type="radio" id="TabPoint" name="mode_tab">
     <input type="radio" id="TabStamp" name="mode_tab">
     <div id="TabLabels">
         <label for="TabEdit" id="TabEditLabel" class="tab_label">TextEdit</label>
@@ -191,7 +192,6 @@
 
 
 </div>
-
 
 
     <script>
@@ -228,8 +228,9 @@ document.getElementById("TextArea").value = `
 @Ruby_End=》
 `;
     </script>
-
     <script type='text/javascript' src='RKLyrics.js' defer></script>
-    <script type='text/javascript' src='index.js' defer></script>
+
+    <script type='text/javascript' src='Global.js' defer></script>
+    <script type='text/javascript' src='Mode_Point.js' defer></script>
 </body>
 </html>
