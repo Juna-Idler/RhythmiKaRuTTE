@@ -20,6 +20,87 @@
         padding:2px;
         box-sizing: border-box;
     }
+    #PlayerArea{
+        display: flex;
+        height:54;
+        flex: 0 0 auto;
+    }
+    #AudioPlayer
+    {
+        width :50%;
+        flex: 1 0 50%;
+    }
+    .playerLabel
+    {
+        height :100%;
+        flex: 0 0 auto;
+        padding: 0px 2px;
+        margin: 0px 1px;
+        text-align: center;
+        border: black 0px solid;
+    }
+    .vcenter{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    #HelpButton
+    {
+        width: 32px;
+        height: 32px;
+        vertical-align: middle;
+        border: black 1px solid;
+        line-height: 32px;
+    }
+    #HelpSwitch
+    {
+        display: none;
+    }
+    #HelpSwitch:checked ~ #HelpOverlap
+    {
+        display: block;
+    }
+    #HelpOverlap
+    {
+        position: fixed;
+        display: none;
+        width:100%;
+        height:100%;
+        top:0;left:0;
+        z-index: 1000;
+        box-sizing: border-box;
+    }
+    #HelpClose
+    {
+        position: absolute;
+        right:0px;
+        top:2px;
+        font-size: 32px;
+        color: black;
+        background-color: white;
+        padding: 0px 8px;
+    }
+    #HelpPage
+    {
+        width:100%;
+        height:100%;
+    }
+
+    #WaveDisplay
+    {
+        width: 100%;
+        height:100px;
+        resize: vertical;
+        overflow: hidden;
+
+        flex: 0 0 auto;
+    }
+    #WaveCanvas
+    {
+        background-color: black;
+    }
+
+
 
     #TabLabels
     {
@@ -70,6 +151,7 @@
         flex:1 1 auto;
         margin: 4px;
         padding: 4px;
+        white-space: pre;
     }
     .bottom_controls_area
     {
@@ -84,7 +166,7 @@
     }
 
 
-    #TagPoint
+    #TagPoint,#TagStamp
     {
         flex-direction: column;
 
@@ -95,7 +177,7 @@
         overflow-y :hidden;
 
     }
-    #TagPointListScroll
+    #TagPointListScroll,#TagStampListScroll
     {
         flex:1 1 auto;
         overflow-y :scroll;
@@ -104,7 +186,7 @@
         border: solid 1px black;
         background-color: #002200;
     }
-    #TagPointList
+    #TagPointList,#TagStampList
     {
         color: white;
         margin:0;
@@ -147,11 +229,28 @@
         color: transparent;
     }
 
-    #TagPointCursor{
+    #TagPointCursor,#TagStampCursor
+    {
         color: #FF0000;
         position: absolute;
         font-size: 0.5rem;
         cursor:default;
+    }
+
+    .StampLine{
+        line-height: 2.0;
+        margin: 0px;
+        border-bottom: 1px solid gray;
+    }
+
+    .StampMarker{
+        color: #888888;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .UpPoint
+    {
+
     }
 
 </style>
@@ -159,6 +258,32 @@
 </head>
 <body>
 <div id="Screen">
+    <div id="PlayerArea">
+        <audio id="AudioPlayer" preload controls>
+        </audio>
+        <span class="playerLabel"><span id="PlaybackRateText">再生速度×1.0</span><br>
+            <input type="range" id="PlaybackRate" min="0.25" max="2" value="1" step="0.25">
+        </span>
+        <span class="playerLabel">表示倍率<br>
+        <select id="MagnificationSelector">
+            <option>100</option>
+            <option selected>250</option>
+            <option>500</option>
+            <option>1000</option>
+        </select>
+        </span>
+        <span class="playerLabel vcenter">
+            <label for="HelpSwitch" id="HelpButton">？</label>
+        </span>
+    </div>
+    <input type="checkbox" id="HelpSwitch">
+    <div id="HelpOverlap">
+        <label for="HelpSwitch" id="HelpClose">×</label>
+        <iframe id="HelpPage" src="help.html"></iframe>
+    </div>
+    <div id="WaveDisplay">
+        <canvas id="WaveCanvas"></canvas>
+    </div>
 
     <input type="radio" id="TabEdit" name="mode_tab" checked>
     <input type="radio" id="TabPoint" name="mode_tab">
@@ -186,8 +311,13 @@
         </div>
     </div>
     <div id="TagStamp" class="TabContent">
-        <ol id="StampList">
-        </ol>
+        <div id="TagStampListScroll">
+            <ol id="TagStampList">
+            </ol>
+            <div id="TagStampCursor">▲</div>
+        </div>
+        <div class="bottom_controls_area">
+        </div>
     </div>
 
 
@@ -229,8 +359,14 @@ document.getElementById("TextArea").value = `
 `;
     </script>
     <script type='text/javascript' src='RKLyrics.js' defer></script>
+    <script type='text/javascript' src='AudioFragmentPlayer.js' defer></script>
+    <script type='text/javascript' src='WaveViewer.js' defer></script>
 
     <script type='text/javascript' src='Global.js' defer></script>
     <script type='text/javascript' src='Mode_Point.js' defer></script>
+    <script type='text/javascript' src='Mode_Stamp.js' defer></script>
+
+    
+    <script type='text/javascript' src='FileDrop.js' defer></script>
 </body>
 </html>

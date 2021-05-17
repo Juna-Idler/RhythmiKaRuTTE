@@ -42,12 +42,13 @@ class TimeTagElement
 //カラオケタイムタグ文字列
 class KaraokeUnit
 {
-    constructor(text_array,start_times,end_times,options)
+    constructor(text_array,start_times,end_times,start_options,end_options)
     {
         this.text_array = text_array;
         this.start_times = start_times;
         this.end_times = end_times;
-        this.options = options;
+        this.start_options = start_options;
+        this.end_options = end_options;
     }
 
     static Create(text,split)
@@ -62,7 +63,8 @@ class KaraokeUnit
         
         let start_times = new Array(this_text_array.length + 2).fill(-1);
         let end_times = new Array(this_text_array.length + 2).fill(-1);
-        let options = new Array(this_text_array.length * 2 + 2).fill("");
+        let start_options = new Array(this_text_array.length + 2).fill("");
+        let end_options = new Array(this_text_array.length + 2).fill("");
         let text_pos = 1;
         for (let i = 0;i < elements.length;i++)
         {
@@ -70,17 +72,18 @@ class KaraokeUnit
             if (e.text_length > 0)
             {
                 start_times[text_pos] = e.start_time;
-                options[text_pos * 2 - 1] = e.option;
+                start_options[text_pos] = e.option;
             }
             else if (end_times[text_pos - 1] < 0)
             {
                 end_times[text_pos - 1] = e.start_time;
-                options[text_pos * 2 - 2] = e.option;
+                end_options[text_pos - 1] = e.option;
             }
             text_pos += e.text_length;
         }
 
-        return new KaraokeUnit(this_text_array,start_times.slice(1,start_times.length-1),end_times.slice(1,end_times.length-1),options.slice(1,options.length-1));
+        return new KaraokeUnit(this_text_array,start_times.slice(1,start_times.length-1),end_times.slice(1,end_times.length-1),
+                                start_options.slice(1,start_options.length-1),end_options.slice(1,end_options.length-1));
     }
     get start_time(){return this.start_times[0];}
     get end_time(){return this.end_times[this.end_times.length-1];}

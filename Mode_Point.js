@@ -7,7 +7,7 @@ const list = document.getElementById("TagPointList");
 const cursor = document.getElementById("TagPointCursor");
 
 var currentLine = 0;
-var currentTTPos = 0;
+var currentCursorPos = 0;
 
 var ruby_parent;
 var ruby_begin;
@@ -23,16 +23,16 @@ function MoveCursor()
 
     const chars = line.querySelectorAll(".PointChar");
 
-    if (currentTTPos < 0)
-        currentTTPos = chars.length * 2 + 2 - 1;
+    if (currentCursorPos < 0)
+        currentCursorPos = chars.length * 2 + 2 - 1;
 
-    if (currentTTPos === 0)
+    if (currentCursorPos === 0)
     {//行頭
         const head = line.querySelector(".PointHead");
         cursor.style.left =  head.offsetLeft + "px";
         cursor.style.top = "calc(" + (head.offsetTop + "px") + " + 1.8rem)";
     }
-    else if (currentTTPos >= chars.length * 2 + 2 - 1)
+    else if (currentCursorPos >= chars.length * 2 + 2 - 1)
     {//行末
         const tail = line.querySelector(".PointTail");
         cursor.style.left =  tail.offsetLeft + "px";
@@ -40,8 +40,8 @@ function MoveCursor()
     }
     else
     {//文字前後
-        const text = chars[Math.floor((currentTTPos - 1) / 2)];
-        cursor.style.left = (currentTTPos & 1) ? (text.offsetLeft) + "px"
+        const text = chars[Math.floor((currentCursorPos - 1) / 2)];
+        cursor.style.left = (currentCursorPos & 1) ? (text.offsetLeft) + "px"
                                                : (text.offsetLeft + text.offsetWidth - cursor.offsetWidth) + "px";
         cursor.style.top = "calc(" + (text.offsetTop + "px") + " + 1.8rem)";
     }
@@ -62,7 +62,7 @@ function textOnClick(e)
     for (i = 0;i < chars.length;i++)
         if (chars[i] === e.currentTarget)
             break;
-    currentTTPos = i * 2 + 1 + after;
+    currentCursorPos = i * 2 + 1 + after;
     for (i = 0;i < list.children.length;i++)
         if (list.children[i] === li)
             break;
@@ -77,20 +77,20 @@ function keydown(e)
     switch (e.code)
     {
         case "KeyA":case "ArrowLeft":
-            if (currentTTPos < 0)
-                currentTTPos = 0;
+            if (currentCursorPos < 0)
+                currentCursorPos = 0;
             else
             {
                 const chars = line.querySelectorAll(".PointChar");
-                if (chars.length * 2 + 1 < currentTTPos)
-                    currentTTPos = chars.length * 2 + 1;
+                if (chars.length * 2 + 1 < currentCursorPos)
+                    currentCursorPos = chars.length * 2 + 1;
             }
-            if (--currentTTPos < 0)
+            if (--currentCursorPos < 0)
             {
                 if (--currentLine < 0)
                 {
                     currentLine = 0;
-                    currentTTPos = 0;
+                    currentCursorPos = 0;
                 }
             }
             MoveCursor();
@@ -98,16 +98,16 @@ function keydown(e)
         case "KeyD":case "ArrowRight":
             {
                 const chars = line.querySelectorAll(".PointChar");
-                if (currentTTPos < 0)
-                    currentTTPos = 0;
-                else if (chars.length * 2 + 1 < currentTTPos)
-                    currentTTPos = chars.length * 2 + 1;
-                if (++currentTTPos > chars.length * 2 + 1)
+                if (currentCursorPos < 0)
+                    currentCursorPos = 0;
+                else if (chars.length * 2 + 1 < currentCursorPos)
+                    currentCursorPos = chars.length * 2 + 1;
+                if (++currentCursorPos > chars.length * 2 + 1)
                 {
                     if (currentLine + 1 < list.children.length)
                     {
                         currentLine++;
-                        currentTTPos = 0;
+                        currentCursorPos = 0;
                     }
                 }
             }
@@ -129,12 +129,12 @@ function keydown(e)
             {
                 const chars = line.querySelectorAll(".PointChar");
 
-                if (currentTTPos < 0)
-                    currentTTPos = 0;
-                else if (chars.length * 2 + 1 < currentTTPos)
-                    currentTTPos = chars.length * 2 + 1;
+                if (currentCursorPos < 0)
+                    currentCursorPos = 0;
+                else if (chars.length * 2 + 1 < currentCursorPos)
+                    currentCursorPos = chars.length * 2 + 1;
 
-                if (currentTTPos === 0)
+                if (currentCursorPos === 0)
                 {
                     if (e.ctrlKey)
                     {
@@ -148,7 +148,7 @@ function keydown(e)
                         line.firstElementChild.classList.toggle("NotPointBefore");
                     }
                 }
-                else if (currentTTPos >= chars.length * 2 + 1)
+                else if (currentCursorPos >= chars.length * 2 + 1)
                 {
                     if (e.ctrlKey)
                     {
@@ -164,8 +164,8 @@ function keydown(e)
                 }
                 else
                 {
-                    const text = chars[Math.floor((currentTTPos - 1) / 2)];
-                    if (currentTTPos & 1)
+                    const text = chars[Math.floor((currentCursorPos - 1) / 2)];
+                    if (currentCursorPos & 1)
                     {
                         if (e.ctrlKey)
                         {
@@ -206,7 +206,6 @@ function before_option_classes(option)
     const ret = [];
     if (option.includes("p")) ret.push("PointBefore");
     if (option.includes("u")) ret.push("UpPointBefore");
-    if (option.includes("n")) ret.push("NotPointBefore");
     return ret;
 }
 function after_option_classes(option)
@@ -214,7 +213,6 @@ function after_option_classes(option)
     const ret = [];
     if (option.includes("p")) ret.push("PointAfter");
     if (option.includes("u")) ret.push("UpPointAfter");
-    if (option.includes("n")) ret.push("NotPointAfter");
     return ret;
 }
 
@@ -234,9 +232,9 @@ function Initialize()
             if (li !== e.target)
                 return;
             if (e.offsetX + li.offsetLeft < li.firstElementChild.offsetLeft + li.firstElementChild.offsetWidth)//行頭
-                currentTTPos = 0;
+                currentCursorPos = 0;
             else if (e.offsetX + li.offsetLeft >= li.lastElementChild.offsetLeft)//行末
-                currentTTPos = -1;
+                currentCursorPos = -1;
             else//文字部分は文字単位のonclickに任せる
                 return;
             let i;
@@ -260,7 +258,7 @@ function Initialize()
         }
         linehead.onclick = (e)=>{
             const li = e.currentTarget.parentElement;
-            currentTTPos = 0;
+            currentCursorPos = 0;
             for (currentLine = 0;currentLine < list.children.length;currentLine++)
                 if (list.children[currentLine] === li)
                     break;
@@ -285,18 +283,18 @@ function Initialize()
                     text.dataset.start_time = kunit.start_times[i];
                     text.dataset.end_time = kunit.end_times[i];
 
-                    if (kunit.options[i * 2])
+                    if (kunit.start_options[i])
                     {
-                        text.classList.add(...before_option_classes(kunit.options[i * 2]));
+                        text.classList.add(...before_option_classes(kunit.start_options[i]));
                     }
                     else
                     {
                         const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
                         text.classList.add(before);
                     }
-                    if (kunit.options[i * 2 + 1])
+                    if (kunit.end_options[i])
                     {
-                        text.classList.add(...after_option_classes(kunit.options[i * 2 + 1]));
+                        text.classList.add(...after_option_classes(kunit.end_options[i]));
                     }
                     else
                     {
@@ -320,18 +318,18 @@ function Initialize()
                     text.dataset.start_time = kunit.start_times[i];
                     text.dataset.end_time = kunit.end_times[i];
 
-                    if (kunit.options[i * 2])
+                    if (kunit.start_options[i])
                     {
-                        text.classList.add(...before_option_classes(kunit.options[i * 2]));
+                        text.classList.add(...before_option_classes(kunit.start_options[i]));
                     }
                     else
                     {
                         const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
                         text.classList.add(before);
                     }
-                    if (kunit.options[i * 2 + 1])
+                    if (kunit.end_options[i])
                     {
-                        text.classList.add(...after_option_classes(kunit.options[i * 2 + 1]));
+                        text.classList.add(...after_option_classes(kunit.end_options[i]));
                     }
                     else
                     {
@@ -358,7 +356,7 @@ function Initialize()
         }
         linetail.onclick = (e)=>{
             const li = e.currentTarget.parentElement;
-            currentTTPos = -1;
+            currentCursorPos = -1;
             for (currentLine = 0;currentLine < list.children.length;currentLine++)
                 if (list.children[currentLine] === li)
                     break;
@@ -376,11 +374,11 @@ function Initialize()
 
 function before_option(e)
 {
-    return (e.classList.contains("PointBefore") ? "p" : "") + (e.classList.contains("UpPointBefore") ? "u" : "") + (e.classList.contains("NotPointBefore") ? "n" : "");
+    return (e.classList.contains("PointBefore") ? "p" : "") + (e.classList.contains("UpPointBefore") ? "u" : "");
 }
 function after_option(e)
 {
-    return (e.classList.contains("PointAfter") ? "p": "") + (e.classList.contains("UpPointAfter") ? "u" : "") + (e.classList.contains("NotPointAfter") ? "n" : "");
+    return (e.classList.contains("PointAfter") ? "p": "") + (e.classList.contains("UpPointAfter") ? "u" : "");
 }
 
 function Terminalize()
@@ -403,12 +401,12 @@ function Terminalize()
                     switch (e.tagName.toLowerCase())
                     {
                         case "span":
-                            if (e.classList.contains("PointBefore") || (0 <= e.dataset.start_time && e.dataset.start_time < TimeTagElement.MaxTime_ms))
+                            if (e.classList.contains("PointBefore"))
                             {
                                 ruby_text += TimeTagElement.TimeString_option(e.dataset.start_time >= 0 ? e.dataset.start_time : TimeTagElement.MaxTime_ms,before_option(e));
                             }
                             ruby_text += e.textContent;
-                            if (e.classList.contains("PointAfter") || (0 <= e.dataset.end_time && e.dataset.end_time < TimeTagElement.MaxTime_ms))
+                            if (e.classList.contains("PointAfter"))
                             {
                                 ruby_text += TimeTagElement.TimeString_option(e.dataset.end_time >= 0 ? e.dataset.end_time : TimeTagElement.MaxTime_ms,after_option(e));
                             }
@@ -423,12 +421,12 @@ function Terminalize()
             else
             {
                 const e = li.children[j];
-                if (e.classList.contains("PointBefore") || (0 <= e.dataset.start_time && e.dataset.start_time < TimeTagElement.MaxTime_ms))
+                if (e.classList.contains("PointBefore"))
                 {
                     text += TimeTagElement.TimeString_option(e.dataset.start_time >= 0 ? e.dataset.start_time : TimeTagElement.MaxTime_ms,before_option(e));
                 }
                 text += e.textContent;
-                if (e.classList.contains("PointAfter") || (0 <= e.dataset.end_time && e.dataset.end_time < TimeTagElement.MaxTime_ms))
+                if (e.classList.contains("PointAfter"))
                 {
                     text += TimeTagElement.TimeString_option(e.dataset.end_time >= 0 ? e.dataset.end_time : TimeTagElement.MaxTime_ms,after_option(e));
                 }
@@ -517,6 +515,8 @@ document.getElementById("AutoPointing").onclick = (e)=>{
     //空白文字以外の行頭文字は問答無用でチェック
         if (!isWhiteSpace(chars[0].textContent))
             CheckBeforeOn(chars[0],true);
+
+        CheckAfterOn(chars[0],false);//後ろは基本的に付けない
 
         for (let j = 1;j < chars.length;j++)
         {
