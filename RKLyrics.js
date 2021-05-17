@@ -51,16 +51,23 @@ class KaraokeUnit
         this.end_options = end_options;
     }
 
-    static Create(text,split)
+    static Create(text,split = Array.from)
     {
         const elements = KaraokeUnit.Parse(text);
+        let text_length = 0;
+        elements.forEach(e=>{text_length += e.text.length;});
+        if (text_length === 0)
+        {
+            return new KaraokeUnit([""],[elements[0].start_time],[elements[elements.length-1].start_time],
+                                        [elements[0].option],[elements[elements.length-1].option]);
+        }
+
         const this_text_array = [];
         elements.forEach(e=>{
             const text_array = split(e.text);
             this_text_array.push(...text_array);
             e.text_length = text_array.length;
         });
-        
         let start_times = new Array(this_text_array.length + 2).fill(-1);
         let end_times = new Array(this_text_array.length + 2).fill(-1);
         let start_options = new Array(this_text_array.length + 2).fill("");
@@ -106,41 +113,59 @@ class KaraokeUnit
         }
         return elements;
     }
+
+    Complement()
+    {
+        for (let i = 0;i < this.text_array.length - 1;i++) {
+            if (this.end_times[i] < 0 && this.start_times[i+1] >= 0) {
+                this.end_times[i] = this.start_times[i+1];
+                continue;
+            }
+            if (this.end_times[i] >= 0 && this.start_times[i+1] < 0)
+                this.start_times[i+1] = this.end_times[i];
+        }
+    }
+    getFirstTime()
+    {
+        for (let i = 0; i < this.text_array.length;i++)
+        {
+            if (this.start_times[i] >= 0)
+            {
+                return {count:i,time:this.start_times[i]};
+            }
+        }
+        return {count:this.text_array.length,time:this.end_time};
+    }
+    getLastTime()
+    {
+        for (let i = this.text_array.length-1; i >= 0;i--)
+        {
+            if (this.end_times[i] >= 0)
+            {
+                return {count:this.text_array.length - i - 1,time:this.end_times[i]};
+            }
+        }
+        return {count:this.text_array.length,time:this.start_time};
+    }
+
+
 }
 
 //ルビ付き（かもしれない）カラオケタイムタグ付き文字列
 class RubyKaraokeUnit
 {
-    constructor(base_karaokeunit,ruby_karaokeunit = null)
+    constructor(phonetic_karaokeunit,base_text = null)
     {
-        this.base = base_karaokeunit;
-        this.ruby = ruby_karaokeunit;
-        if (this.noRuby)
-        {
-            this.start_time = this.base.start_time;
-            this.end_time = this.base.end_time;
-        }
-        else
-        {
-            if (this.base.start_time < 0 && this.ruby.start_time < 0)
-                this.Start_time = -1;
-            else if (this.base.start_time >= 0 && this.ruby.start_time >= 0)
-            {
-                this.start_time = Math.min(this.base.start_time,this.ruby.start_time);
-            }
-            else
-            {
-                this.start_time = Math.max(this.base.start_time,this.ruby.start_time);
-                this.base.start_times[0] = this.ruby.start_times[0] = this.start_time;
-            }
-            this.end_time = Math.max(this.base.end_time,this.ruby.end_time);
-            this.base.end_times[this.base.end_times.length-1] = this.base.end_time < 0 ? this.end_time : this.base.end_time;
-            this.ruby.end_times[this.ruby.end_times.length-1] = this.ruby.end_time < 0 ? this.end_time : this.ruby.end_time;
-        }
+        this.phonetic = phonetic_karaokeunit;
+        this.base_text = base_text;
     }
+    get start_time() {return this.phonetic.start_time;}
+    get end_time() {return this.phonetic.end_time;}
+    set start_time(time) {this.phonetic.start_times[0] = time;}
+    set end_time(time) {this.phonetic.end_times[this.phonetic.end_times.length-1] = time;}
 
-    get hasRuby() {return this.ruby !== null;}
-    get noRuby() {return this.ruby === null;}
+    get hasRuby() {return this.base_text !== null;}
+    get noRuby() {return this.base_text === null;}
 
 }
 
@@ -254,17 +279,86 @@ class RubyKaraokeLyricsLine
         const ruby_units = atrubytag.Translate(textline);
         for (let i = 0; i < ruby_units.length;i++)
         {
-            this.units.push(
-                new RubyKaraokeUnit(
-                    KaraokeUnit.Create(ruby_units[i].base,split),
-                    ruby_units[i].hasRuby ? KaraokeUnit.Create(ruby_units[i].ruby,split) : null));
+            if (ruby_units[i].hasRuby)
+            {
+                this.units.push(new RubyKaraokeUnit(KaraokeUnit.Create(ruby_units[i].ruby,split),
+                                                    KaraokeUnit.Create(ruby_units[i].base,split).text));
+            }
+            else
+            {
+                this.units.push(new RubyKaraokeUnit(KaraokeUnit.Create(ruby_units[i].base,split),null));
+            }
         }
+        for (let i = 0;i < this.units.length;i++)
+        {
+            if (this.units[i].phonetic.text === "")
+            {
+                if (i + 1 < this.units.length)
+                {
+                    if (this.units[i+1].start_time < 0)
+                        this.units[i+1].start_time = this.units[i].start_time;
+                }
+                if (i - 1 >= 0 && this.units[i-1].end_time < 0)
+                {
+                    if (i === this.units.length - 1 || (i + 1 < this.units.length && this.units[i+1].start_time >= 0))
+                    {
+                        this.units[i-1].end_time = this.units[i].end_time;
+                    }
+                }
+            }
+        }
+        this.units = this.units.filter(u=>u.phonetic.text !== "");
+
+
         const array = KaraokeUnit.Parse(textline);
         this.start_time =  (array[0].start_time >= 0 && array[0].text === "") ? array[0].start_time : -1;
         this.end_time = (array.length > 1 && array[array.length-1].text === "" && array[array.length-2].text === "") ?
                         array[array.length-1].start_time : -1;
         this.start_option = this.start_time >= 0 ? array[0].option : "";
         this.end_option = this.end_time >= 0 ? array[array.length-1].option : "";
+
+    }
+    Complement()
+    {
+        if (this.start_time < 0 || this.end_time < 0)
+            return false;
+        if (this.units.length === 0)
+            return true;
+        if (this.units[0].start_time < 0)
+            this.units[0].start_time = this.start_time;
+        if (this.units[this.units.length-1].end_time < 0)
+            this.units[this.units.length-1].end_time = this.end_time;
+
+        this.units.forEach(u=>u.phonetic.Complement());
+
+        for (let i = 0;i < this.units.length - 1;i++)
+        {
+            if (this.units[i].end_time < 0 && this.units[i+1].start_time < 0)
+            {
+                const prev = this.units[i].phonetic.getLastTime();
+                let nc = 0;
+                let nt = 0;
+                for (let j = i+1;j < this.units.length;j++)
+                {
+                    const next = this.units[j].phonetic.getFirstTime();
+                    nc += next.count;
+                    if (next.time < 0)
+                    {
+                        nt = next.time;
+                        break;
+                    }
+                }
+                const divtime = (prev.time * nc + nt * prev.count) / (preb.count + nt);
+                this.units[i].end_time = this.units[i+1].start_time = divtime;
+            }
+            else
+            {
+                if (this.units[i+1].start_time < 0)
+                    this.units[i+1].start_time = this.units[i].end_time;
+                else if (this.units[i].end_time < 0)
+                    this.units[i].end_time = this.units[i+1].start_time;
+            }
+        }
 
     }
 }

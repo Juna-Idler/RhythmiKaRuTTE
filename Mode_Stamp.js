@@ -167,7 +167,7 @@ function keyup(e)
     }
 }
 
-function append_marker(parent,time,option)
+function append_marker(parent,ref_node,time,option)
 {
     if (time >= 0)
     {
@@ -182,7 +182,7 @@ function append_marker(parent,time,option)
         }
         else
             marker.textContent = "[";
-        parent.appendChild(marker);
+        parent.insertBefore(marker,ref_node);
     }
 }
 
@@ -207,44 +207,35 @@ function Initialize()
             MoveCursor();
         };
 
-        append_marker(li,line.start_time,line.start_option);
+        append_marker(li,null,line.start_time,line.start_option);
         line.units.forEach(rkunit=>{
+            let parent_element = li;
+            let ref_node = null;
+
             if (rkunit.hasRuby)
             {
                 const ruby = document.createElement("ruby");
                 const rt = document.createElement("rt");
-                rt.textContent = rkunit.base.text;
-
-                const kunit = rkunit.ruby;
-                for (let i = 0;i < kunit.text_array.length;i++)
-                {
-                    const text = document.createElement("span");
-                    text.textContent = kunit.text_array[i];
-                    text.classList.add("StampChar")
-
-                    append_marker(ruby,kunit.start_times[i],kunit.start_options[i]);
-                    ruby.appendChild(text);
-                    append_marker(ruby,kunit.end_times[i],kunit.end_options[i]);
-                }
+                rt.textContent = rkunit.base_text;
                 ruby.appendChild(rt);
                 li.appendChild(ruby);
+                parent_element = ruby;
+                ref_node = rt;
             }
-            else
-            {
-                const kunit = rkunit.base;
-                for (let i = 0;i < kunit.text_array.length;i++)
-                {
-                    const text = document.createElement("span");
-                    text.textContent = kunit.text_array[i];
-                    text.classList.add("StampChar")
 
-                    append_marker(li,kunit.start_times[i],kunit.start_options[i]);
-                    li.appendChild(text);
-                    append_marker(li,kunit.end_times[i],kunit.end_options[i]);
-                }
+            const kunit = rkunit.phonetic;
+            for (let i = 0;i < kunit.text_array.length;i++)
+            {
+                const text = document.createElement("span");
+                text.textContent = kunit.text_array[i];
+                text.classList.add("StampChar")
+
+                append_marker(parent_element,ref_node,kunit.start_times[i],kunit.start_options[i]);
+                parent_element.insertBefore(text,ref_node);
+                append_marker(parent_element,ref_node,kunit.end_times[i],kunit.end_options[i]);
             }
         });
-        append_marker(li,line.end_time,line.end_option);
+        append_marker(li,null,line.end_time,line.end_option);
         list.appendChild(li);
     });
 

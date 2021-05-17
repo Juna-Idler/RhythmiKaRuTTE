@@ -3,255 +3,307 @@
 <meta charset="utf-8">
 <title>RhythmiKaRuTTE</title>
 <style>
-    html,body{
-        height :100%;
-        margin:0;
-        font-size: 100%;
-    }
-    button, input, select, textarea {
-        font-family : inherit;
-        font-size : 100%;
-    }
-    #Screen
-    {
-        display: flex;
-        flex-direction: column;
-        height :100%;
-        padding:2px;
-        box-sizing: border-box;
-    }
-    #PlayerArea{
-        display: flex;
-        height:54;
-        flex: 0 0 auto;
-    }
-    #AudioPlayer
-    {
-        width :50%;
-        flex: 1 0 50%;
-    }
-    .playerLabel
-    {
-        height :100%;
-        flex: 0 0 auto;
-        padding: 0px 2px;
-        margin: 0px 1px;
-        text-align: center;
-        border: black 0px solid;
-    }
-    .vcenter{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    #HelpButton
-    {
-        width: 32px;
-        height: 32px;
-        vertical-align: middle;
-        border: black 1px solid;
-        line-height: 32px;
-    }
-    #HelpSwitch
-    {
-        display: none;
-    }
-    #HelpSwitch:checked ~ #HelpOverlap
-    {
-        display: block;
-    }
-    #HelpOverlap
-    {
-        position: fixed;
-        display: none;
-        width:100%;
-        height:100%;
-        top:0;left:0;
-        z-index: 1000;
-        box-sizing: border-box;
-    }
-    #HelpClose
-    {
-        position: absolute;
-        right:0px;
-        top:2px;
-        font-size: 32px;
-        color: black;
-        background-color: white;
-        padding: 0px 8px;
-    }
-    #HelpPage
-    {
-        width:100%;
-        height:100%;
-    }
+html,body{
+    height :100%;
+    margin:0;
+    font-size: 100%;
+}
+button, input, select, textarea {
+    font-family : inherit;
+    font-size : 100%;
+}
+#Screen
+{
+    display: flex;
+    flex-direction: column;
+    height :100%;
+    padding:2px;
+    box-sizing: border-box;
+}
+#PlayerArea{
+    display: flex;
+    height:54;
+    flex: 0 0 auto;
+}
+#AudioPlayer
+{
+    width :50%;
+    flex: 1 0 50%;
+}
+.playerLabel
+{
+    height :100%;
+    flex: 0 0 auto;
+    padding: 0px 2px;
+    margin: 0px 1px;
+    text-align: center;
+    border: black 0px solid;
+}
+.vcenter{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#HelpButton
+{
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    border: black 1px solid;
+    line-height: 32px;
+}
+#HelpSwitch
+{
+    display: none;
+}
+#HelpSwitch:checked ~ #HelpOverlap
+{
+    display: block;
+}
+#HelpOverlap
+{
+    position: fixed;
+    display: none;
+    width:100%;
+    height:100%;
+    top:0;left:0;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+#HelpClose
+{
+    position: absolute;
+    right:0px;
+    top:2px;
+    font-size: 32px;
+    color: black;
+    background-color: white;
+    padding: 0px 8px;
+}
+#HelpPage
+{
+    width:100%;
+    height:100%;
+}
 
-    #WaveDisplay
-    {
-        width: 100%;
-        height:100px;
-        resize: vertical;
-        overflow: hidden;
+#WaveDisplay
+{
+    width: 100%;
+    height:100px;
+    resize: vertical;
+    overflow: hidden;
 
-        flex: 0 0 auto;
-    }
-    #WaveCanvas
-    {
-        background-color: black;
-    }
-
-
-
-    #TabLabels
-    {
-        flex: 0 1 auto;
-        padding-top: 2px;
-        border-bottom: 0px solid #999999;
-    }
-    input[name="mode_tab"]
-    {
-        display: none;
-    }
-    .TabContent{
-        display: none;
-    }
-    .tab_label
-    {
-        padding: 0px 8px;
-        margin:0px 8px;
-        border: 1px solid #000000;
-        border-bottom: 4px solid #BBBBBB;
-        border-top: 4px solid #eeeeee;
-        background-color: #dddddd;
-    }
-    #TabEdit:checked ~ * #TabEditLabel ,
-    #TabStamp:checked ~ * #TabStampLabel ,
-    #TabPoint:checked ~ * #TabPointLabel
-    {
-        background-color: #999999;
-        color: #fff;
-    }
-    #TabEdit:checked ~ #TextEdit ,
-    #TabPoint:checked ~ #TagPoint ,
-    #TabStamp:checked ~ #TagStamp
-    {
-        display:flex;
-    }
-
-    #TextEdit
-    {
-        height :100%;
-        flex-direction: column;
-        flex: 1 1 auto;
-    }    
-    #TextArea
-    {
-        height: 115%;
-        resize:none;
-        flex:1 1 auto;
-        margin: 4px;
-        padding: 4px;
-        white-space: pre;
-    }
-    .bottom_controls_area
-    {
-        display: flex;
-        flex-direction: row-reverse;
-        align-items: center;        
-        flex:0 0 auto;
-    }
-    .bottom_controls
-    {
-        margin :0px 8px;
-    }
+    flex: 0 0 auto;
+}
+#WaveCanvas
+{
+    background-color: black;
+}
 
 
-    #TagPoint,#TagStamp
-    {
-        flex-direction: column;
 
-        height: 100%;
-        flex: 1 1 auto;
+#TabLabels
+{
+    flex: 0 1 auto;
+    padding-top: 2px;
+    border-bottom: 0px solid #999999;
+}
+input[name="mode_tab"]
+{
+    display: none;
+}
+.TabContent{
+    display: none;
+}
+.tab_label
+{
+    padding: 0px 8px;
+    margin:0px 8px;
+    border: 1px solid #000000;
+    border-bottom: 4px solid #BBBBBB;
+    border-top: 4px solid #eeeeee;
+    background-color: #dddddd;
+}
+#TabEdit:checked ~ * #TabEditLabel ,
+#TabPoint:checked ~ * #TabPointLabel ,
+#TabStamp:checked ~ * #TabStampLabel ,
+#TabTest:checked ~ * #TabTestLabel
+{
+    background-color: #999999;
+    color: #fff;
+}
+#TabEdit:checked ~ #TextEdit ,
+#TabPoint:checked ~ #TagPoint ,
+#TabStamp:checked ~ #TagStamp ,
+#TabTest:checked ~ #TTTest
+{
+    display:flex;
+}
 
-        user-select: none;
-        overflow-y :hidden;
+#TextEdit
+{
+    height :100%;
+    flex-direction: column;
+    flex: 1 1 auto;
+}    
+#TextArea
+{
+    height: 115%;
+    resize:none;
+    flex:1 1 auto;
+    margin: 4px;
+    padding: 4px;
+    white-space: pre;
+}
+.bottom_controls_area
+{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;        
+    flex:0 0 auto;
+}
+.bottom_controls
+{
+    margin :0px 8px;
+}
 
-    }
-    #TagPointListScroll,#TagStampListScroll
-    {
-        flex:1 1 auto;
-        overflow-y :scroll;
-        position: relative;
-        margin-bottom: 2px;
-        border: solid 1px black;
-        background-color: #002200;
-    }
-    #TagPointList,#TagStampList
-    {
-        color: white;
-        margin:0;
-        font-size: 1.2rem;
-        list-style-type: decimal-leading-zero;
-    }
-    .PointLine{
-        line-height: 2.0;
-        margin: 0px;
-        border-bottom: 1px solid gray;
-    }
-    .PointChar,.PointHead,.PointTail
-    {
-        margin: 0px;
-        padding-left: 0px;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        cursor:default;
-    }
-    .PointChar::before,.PointHead::before{
-        content: "[";
-    }
-    .PointChar::after,.PointTail::after{
-        content: "]";
-    }
 
-    .PointBefore::before,.PointAfter::after,
-    .PointHead.PointBefore,.PointTail.PointAfter
-    {
-        color: #888888;
-    }
-    .UpPointBefore::before,.UpPointAfter::after,
-    .PointHead.UpPointBefore,.PointTail.UpPointAfter
-    {
-        color: #FFFF00;
-    }
-    .NotPointBefore::before,.NotPointAfter::after,
-    .PointHead.NotPointBefore,.PointTail.NotPointAfter
-    {
-        color: transparent;
-    }
+#TagPoint,#TagStamp
+{
+    flex-direction: column;
 
-    #TagPointCursor,#TagStampCursor
-    {
-        color: #FF0000;
-        position: absolute;
-        font-size: 0.5rem;
-        cursor:default;
-    }
+    height: 100%;
+    flex: 1 1 auto;
 
-    .StampLine{
-        line-height: 2.0;
-        margin: 0px;
-        border-bottom: 1px solid gray;
-    }
+    user-select: none;
+    overflow-y :hidden;
 
-    .StampMarker{
-        color: #888888;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-    }
-    .UpPoint
-    {
+}
+#TagPointListScroll,#TagStampListScroll
+{
+    flex:1 1 auto;
+    overflow-y :scroll;
+    position: relative;
+    margin-bottom: 2px;
+    border: solid 1px black;
+    background-color: #002200;
+}
+#TagPointList,#TagStampList
+{
+    color: white;
+    margin:0;
+    font-size: 1.2rem;
+    list-style-type: decimal-leading-zero;
+}
+.PointLine{
+    line-height: 2.0;
+    margin: 0px;
+    border-bottom: 1px solid gray;
+}
+.PointChar,.PointHead,.PointTail
+{
+    margin: 0px;
+    padding-left: 0px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor:default;
+}
+.PointChar::before,.PointHead::before{
+    content: "[";
+}
+.PointChar::after,.PointTail::after{
+    content: "]";
+}
 
-    }
+.PointBefore::before,.PointAfter::after,
+.PointHead.PointBefore,.PointTail.PointAfter
+{
+    color: #888888;
+}
+.UpPointBefore::before,.UpPointAfter::after,
+.PointHead.UpPointBefore,.PointTail.UpPointAfter
+{
+    color: #FFFF00;
+}
+.NotPointBefore::before,.NotPointAfter::after,
+.PointHead.NotPointBefore,.PointTail.NotPointAfter
+{
+    color: transparent;
+}
+
+#TagPointCursor,#TagStampCursor
+{
+    color: #FF0000;
+    position: absolute;
+    font-size: 0.5rem;
+    cursor:default;
+}
+
+.StampLine{
+    line-height: 2.0;
+    margin: 0px;
+    border-bottom: 1px solid gray;
+}
+
+.StampMarker{
+    color: #888888;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.UpPoint
+{
+
+}
+
+#TTTest{
+    flex:1 1 auto;
+    overflow-y :hidden;
+
+}
+
+#TestLyricsView {
+    text-align: center;
+    background-color: black;
+    line-height: 2;
+    margin:0;
+    padding-left: 4rem;
+    font-size: 2.0rem;
+    list-style-type: decimal-leading-zero;
+    overflow-y :scroll;
+    width: 100%;
+
+
+}
+
+.KaraokeLine{
+    transition-duration: 0s;
+    transition-property: color,text-shadow;
+}
+.KaraokeStanbyLine {
+    color :white;
+    text-shadow: 2px  2px 3px navy,
+            -2px  2px 3px navy,
+             2px -2px 3px navy,
+            -2px -2px 3px navy;
+
+
+}
+.KaraokeActiveLine {
+    color :white;
+    text-shadow: 2px  2px 3px blue,
+            -2px  2px 3px blue,
+             2px -2px 3px blue,
+            -2px -2px 3px blue;
+
+}
+.KaraokeActiveWord {
+    color :white;
+    text-shadow: 2px  2px 3px red,
+                -2px  2px 3px red,
+                2px -2px 3px red,
+                -2px -2px 3px red;
+}
+
 
 </style>
 
@@ -288,10 +340,12 @@
     <input type="radio" id="TabEdit" name="mode_tab" checked>
     <input type="radio" id="TabPoint" name="mode_tab">
     <input type="radio" id="TabStamp" name="mode_tab">
+    <input type="radio" id="TabTest" name="mode_tab">
     <div id="TabLabels">
         <label for="TabEdit" id="TabEditLabel" class="tab_label">TextEdit</label>
         <label for="TabPoint" id="TabPointLabel" class="tab_label">TagPoint</label>
-        <label for="TabStamp" id=TabStampLabel class="tab_label">TagStamp</label>
+        <label for="TabStamp" id="TabStampLabel" class="tab_label">TagStamp</label>
+        <label for="TabTest" id="TabTestLabel" class="tab_label">TTTest</label>
     </div>
     <div id="TextEdit" class="TabContent">
         <textarea id="TextArea" spellcheck="false"></textarea>
@@ -319,7 +373,10 @@
         <div class="bottom_controls_area">
         </div>
     </div>
-
+    <div id="TTTest" class="TabContent">
+        <ol id="TestLyricsView">
+        </ol>
+    </div>
 
 </div>
 
@@ -366,6 +423,7 @@ document.getElementById("TextArea").value = `
     <script type='text/javascript' src='Mode_Point.js' defer></script>
     <script type='text/javascript' src='Mode_Stamp.js' defer></script>
 
+    <script type='text/javascript' src='Mode_Test.js' defer></script>
     
     <script type='text/javascript' src='FileDrop.js' defer></script>
 </body>

@@ -116,12 +116,14 @@ function grapheme_split(text)
 var EditModeInitializer;
 var PointModeInitializer;
 var StampModeInitializer;
+var TestModeInitializer;
 
 (function ModeShifter(){
 
 const tab_edit = document.getElementById("TabEdit");
 const tab_point = document.getElementById("TabPoint");
 const tab_stamp = document.getElementById("TabStamp");
+const tab_test = document.getElementById("TabTest");
 
 var LastMode = "edit";
 
@@ -141,7 +143,10 @@ function TabChange(e)
             if (tab_stamp.checked) return;
             StampModeInitializer.Terminalize();
         break;
-    }
+        case "test":
+            if (tab_test.checked) return;
+            TestModeInitializer.Terminalize();
+        break;    }
     if (tab_edit.checked)
     {
         EditModeInitializer.Initialize();
@@ -157,11 +162,16 @@ function TabChange(e)
         StampModeInitializer.Initialize();
         LastMode = "stamp";
     }
-}
+    else if (tab_test.checked)
+    {
+        TestModeInitializer.Initialize();
+        LastMode = "test";
+    }}
 
 tab_edit.addEventListener("change",TabChange);
 tab_point.addEventListener("change",TabChange);
 tab_stamp.addEventListener("change",TabChange);
+tab_test.addEventListener("change",TabChange);
 
 }());
 

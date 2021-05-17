@@ -224,7 +224,6 @@ function Initialize()
     ruby_begin = lyrics.atRubyTag.ruby_begin;
     ruby_end = lyrics.atRubyTag.ruby_end;
     lyrics.lines.forEach(line=>{
-
         const li = document.createElement("li");
         li.classList.add("PointLine");
         li.onclick = (e)=>{
@@ -268,78 +267,47 @@ function Initialize()
 
 
         line.units.forEach(rkunit=>{
+            let parent_element = li;
+            let ref_node = null;
             if (rkunit.hasRuby)
             {
                 const ruby = document.createElement("ruby");
                 const rt = document.createElement("rt");
-                rt.textContent = rkunit.base.text;
-
-                const kunit = rkunit.ruby;
-                for (let i = 0;i < kunit.text_array.length;i++)
-                {
-                    const text = document.createElement("span");
-                    text.textContent = kunit.text_array[i];
-                    text.classList.add("PointChar")
-                    text.dataset.start_time = kunit.start_times[i];
-                    text.dataset.end_time = kunit.end_times[i];
-
-                    if (kunit.start_options[i])
-                    {
-                        text.classList.add(...before_option_classes(kunit.start_options[i]));
-                    }
-                    else
-                    {
-                        const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
-                        text.classList.add(before);
-                    }
-                    if (kunit.end_options[i])
-                    {
-                        text.classList.add(...after_option_classes(kunit.end_options[i]));
-                    }
-                    else
-                    {
-                        const after = (kunit.end_times[i] < 0) ? "NotPointAfter" : "PointAfter";
-                        text.classList.add(after);
-                    }
-                    text.onclick = textOnClick;
-                    ruby.appendChild(text);
-                }
+                rt.textContent = rkunit.base_text;
                 ruby.appendChild(rt);
                 li.appendChild(ruby);
+                parent_element = ruby;
+                ref_node = rt;
             }
-            else
+            const kunit = rkunit.phonetic;
+            for (let i = 0;i < kunit.text_array.length;i++)
             {
-                const kunit = rkunit.base;
-                for (let i = 0;i < kunit.text_array.length;i++)
+                const text = document.createElement("span");
+                text.textContent = kunit.text_array[i];
+                text.classList.add("PointChar")
+                text.dataset.start_time = kunit.start_times[i];
+                text.dataset.end_time = kunit.end_times[i];
+
+                if (kunit.start_options[i])
                 {
-                    const text = document.createElement("span");
-                    text.textContent = kunit.text_array[i];
-                    text.classList.add("PointChar")
-                    text.dataset.start_time = kunit.start_times[i];
-                    text.dataset.end_time = kunit.end_times[i];
-
-                    if (kunit.start_options[i])
-                    {
-                        text.classList.add(...before_option_classes(kunit.start_options[i]));
-                    }
-                    else
-                    {
-                        const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
-                        text.classList.add(before);
-                    }
-                    if (kunit.end_options[i])
-                    {
-                        text.classList.add(...after_option_classes(kunit.end_options[i]));
-                    }
-                    else
-                    {
-                        const after = (kunit.end_times[i] < 0) ? "NotPointAfter" : "PointAfter";
-                        text.classList.add(after);
-                    }
-
-                    text.onclick = textOnClick;
-                    li.appendChild(text);
+                    text.classList.add(...before_option_classes(kunit.start_options[i]));
                 }
+                else
+                {
+                    const before = (kunit.start_times[i] < 0) ? "NotPointBefore" : "PointBefore";
+                    text.classList.add(before);
+                }
+                if (kunit.end_options[i])
+                {
+                    text.classList.add(...after_option_classes(kunit.end_options[i]));
+                }
+                else
+                {
+                    const after = (kunit.end_times[i] < 0) ? "NotPointAfter" : "PointAfter";
+                    text.classList.add(after);
+                }
+                text.onclick = textOnClick;
+                parent_element.insertBefore(text,ref_node);
             }
         });
         const linetail = document.createElement("span");
