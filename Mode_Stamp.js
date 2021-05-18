@@ -11,6 +11,88 @@ var ruby_parent;
 var ruby_begin;
 var ruby_end;
 
+function Stamp_DrawWaveView()
+{
+    if (!waveViewer)
+        return;
+
+    const width  = canvas.width;
+    const height = canvas.height;
+    const nowpoint = Math.floor(width * 0.3)
+    waveViewer.DrawCanvas(canvas,WaveViewTime - (nowpoint * 1000/Magnification),1000/Magnification);
+    const ctx = canvas.getContext("2d");
+
+    if (list.children.length > 0)
+    {
+        const view_start_ms = WaveViewTime - (nowpoint * 1000/Magnification);
+        const view_end_ms = view_start_ms + (canvas.width * 1000/Magnification);
+
+        ctx.font = canvas.height / 4 + "px sans-serif";
+        ctx.textBaseline = "ideographic";
+
+        if (currentLine >= list.children.length)
+            currentLine = list.children.length - 1;
+        const np = NextPoint(currentLine,-1);
+        const pp = PrevPoint(currentLine,0);
+
+        const line = list.children[currentLine];
+        const sub_lines = [];
+        if (np) sub_lines.push(list.children[np.line]);
+        if (pp) sub_lines.push(list.children[pp.line]);
+
+
+        const marks = line.querySelectorAll(".StampMarker");
+        for (let i = 0;i < marks.length;i++)
+        {
+            const time = Number(marks[i].dataset.time);
+            if (time >= 0 && time >= view_end_ms)
+                break;
+            if (time < 0)
+                continue;
+            ctx.fillStyle = i === currentTTPos ? "lime" : "red";
+            const x = (time - view_start_ms) * Magnification/1000;
+
+            ctx.fillRect(x,0,1,canvas.height);
+            const next = marks[i].nextElementSibling;
+            if (next && next.textContent && !marks[i].classList.contains("UpPoint") &&
+                next.tagName.toLowerCase() !== "ruby")
+            {
+                ctx.fillStyle = "white";
+                ctx.fillText(next.textContent, x + 1, canvas.height);
+            }
+        }
+        sub_lines.forEach(l=>{
+            const marks = l.querySelectorAll(".StampMarker");
+            for (let i = 0;i < marks.length;i++)
+            {
+                const time = Number(marks[i].dataset.time);
+                if (time >= 0 && time >= view_end_ms)
+                    break;
+                if (time < 0)
+                    continue;
+                ctx.fillStyle = "blue";
+                const x = (time - view_start_ms) * Magnification/1000;
+    
+                ctx.fillRect(x,0,1,canvas.height);
+                const next = marks[i].nextElementSibling;
+                if (next && next.textContent && !marks[i].classList.contains("UpPoint") &&
+                    next.tagName.toLowerCase() !== "ruby")
+                {
+                    ctx.fillStyle = "white";
+                    ctx.fillText(next.textContent, x + 1, canvas.height);
+                }
+            }
+        });
+
+    }
+
+
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(nowpoint,0,1,height);
+}
+
+
 function MoveCursor()
 {
     if (list.children.length === 0)
@@ -37,44 +119,63 @@ function MoveCursor()
     line.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
 }
 
-function StepNext()
+function NextPoint(line,ttpos)
 {
-    const current_marks = list.children[currentLine].querySelectorAll(".StampMarker");
-    if (currentTTPos + 1 >= current_marks.length)
+    const current_marks = list.children[line].querySelectorAll(".StampMarker");
+    if (ttpos < 0)
+        ttpos = current_marks.length - 1;
+    if (ttpos + 1 >= current_marks.length)
     {
-        for (let i = currentLine + 1;i < list.children.length;i++)
+        for (let i = line + 1;i < list.children.length;i++)
         {
             const marks = list.children[i].querySelectorAll(".StampMarker");
             if (marks.length > 0)
             {
-                currentLine = i;
-                currentTTPos = 0;
-                return true;
+                return {line:i,ttpos:0};
             }
         }
-        return false;
+        return null;
     }
-    currentTTPos++;
-    return true;
+    return {line:line,ttpos:ttpos + 1};
+}
+function PrevPoint(line,ttpos)
+{
+    if (ttpos - 1 < 0)
+    {
+        for (let i = line - 1;i >= 0;i--)
+        {
+            const marks = list.children[i].querySelectorAll(".StampMarker");
+            if (marks.length > 0)
+            {
+                return {line:i,ttpos:marks.length - 1};
+            }
+        }
+        return null;
+    }
+    return {line:line,ttpos:ttpos - 1};
+}
+
+function StepNext()
+{
+    const np = NextPoint(currentLine,currentTTPos);
+    if (np !== null)
+    {
+        currentLine = np.line;
+        currentTTPos = np.ttpos;
+        return true;
+    }
+    return false;
 }
 function StepPrev()
 {
-    if (currentTTPos - 1 < 0)
+    const pp = PrevPoint(currentLine,currentTTPos);
+    if (pp !== null)
     {
-        for (let i = currentLine - 1;i >= 0;i--)
-        {
-            const marks = list.children[i].querySelectorAll(".StampMarker");
-            if (marks.length > 0)
-            {
-                currentLine = i;
-                currentTTPos = marks.length - 1;
-                return true;
-            }
-        }
-        return false;
+        currentLine = pp.line;
+        currentTTPos = pp.ttpos;
+        return true;
     }
-    currentTTPos--;
-    return true;
+    return false;
 }
 
 function keydown(e)
@@ -224,16 +325,37 @@ function Initialize()
             }
 
             const kunit = rkunit.phonetic;
+            let span = null;
             for (let i = 0;i < kunit.text_array.length;i++)
             {
-                const text = document.createElement("span");
-                text.textContent = kunit.text_array[i];
-                text.classList.add("StampChar")
-
-                append_marker(parent_element,ref_node,kunit.start_times[i],kunit.start_options[i]);
-                parent_element.insertBefore(text,ref_node);
-                append_marker(parent_element,ref_node,kunit.end_times[i],kunit.end_options[i]);
+                if (kunit.start_times[i] >= 0)
+                {
+                    if (span !== null)
+                    {
+                        parent_element.insertBefore(span,ref_node);
+                    }
+                    span = document.createElement("span");
+                    span.classList.add("StampChar")
+                    append_marker(parent_element,ref_node,kunit.start_times[i],kunit.start_options[i]);
+                }
+                else if (span === null)
+                {
+                    span = document.createElement("span");
+                    span.classList.add("StampChar")
+                }
+                span.textContent += kunit.text_array[i];
+                if (kunit.end_times[i] >= 0)
+                {
+                    parent_element.insertBefore(span,ref_node);
+                    append_marker(parent_element,ref_node,kunit.end_times[i],kunit.end_options[i]);
+                    span = null;
+                }
             }
+            if (span !== null)
+            {
+                parent_element.insertBefore(span,ref_node);
+            }
+
         });
         append_marker(li,null,line.end_time,line.end_option);
         list.appendChild(li);
@@ -243,6 +365,7 @@ function Initialize()
     document.addEventListener("keydown",keydown,false);
     document.addEventListener("keyup",keyup,false);
     MoveCursor();
+    DrawWaveView = Stamp_DrawWaveView;
 }
 
 function serialize(e)
@@ -293,8 +416,9 @@ function Terminalize()
 
     while (list.firstChild)
         list.firstChild.remove();
-        document.removeEventListener("keyup",keyup,false);
-        document.removeEventListener("keydown",keydown,false);
+    document.removeEventListener("keyup",keyup,false);
+    document.removeEventListener("keydown",keydown,false);
+    DrawWaveView = DefaultDrawWaveView;
 }
 
 StampModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};

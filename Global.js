@@ -48,7 +48,7 @@ var fragmentPlayer = null;
 }());
 
 
-function DrawWaveView()
+function DefaultDrawWaveView()
 {
     if (!waveViewer)
         return;
@@ -61,6 +61,7 @@ function DrawWaveView()
     ctx.fillStyle = "white";
     ctx.fillRect(nowpoint,0,1,height);
 }
+var DrawWaveView = DefaultDrawWaveView;
 
 
 
