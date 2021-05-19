@@ -273,7 +273,7 @@ class AtRubyTag
 
 class RubyKaraokeLyricsLine
 {
-    constructor(textline,atrubytag,split)
+    constructor(textline,atrubytag,split = Array.from)
     {
         this.units = [];
         const ruby_units = atrubytag.Translate(textline);

@@ -63,6 +63,50 @@ function DefaultDrawWaveView()
 }
 var DrawWaveView = DefaultDrawWaveView;
 
+var SetDefaultCanvasMouseEvent;
+(function WaveViewerMouseEvent(){
+    var x;
+    var playing;
+    canvas.ondragstart = (e)=>{return false;}
+
+    function onMouseMove(e) {
+        WaveViewTime -=  (e.pageX - x) * (1000 / Magnification);
+        if (WaveViewTime < 0)
+            WaveViewTime = 0;
+        x = e.pageX;
+        DrawWaveView();
+    }
+    function onMouseUp(e){
+        audio.currentTime = WaveViewTime / 1000;
+        if (playing)
+            audio.play();
+        document.removeEventListener('mousemove', onMouseMove, false);
+        document.removeEventListener('mouseup', onMouseUp, false);
+    }   
+    
+    function onMouseDown(e){
+        playing = !audio.paused;
+        audio.pause();
+        x = e.pageX;
+        document.addEventListener("mousemove",onMouseMove, false);
+        document.addEventListener("mouseup",onMouseUp, false);
+    }
+
+    SetDefaultCanvasMouseEvent = (enable)=>{
+        if (enable)
+        {
+            canvas.addEventListener("mousedown",onMouseDown, false);
+        }
+        else
+        {
+            canvas.removeEventListener("mousedown",onMouseDown,false);
+        }
+
+    };
+    SetDefaultCanvasMouseEvent(true);
+
+}());
+
 
 
 (function CanvasResize(){
@@ -102,6 +146,8 @@ var DrawWaveView = DefaultDrawWaveView;
 }());
 
 
+var CreateLyricsContainer;
+(function(){
 //今（何時の？）はクロームしか対応してないらしいけどこれで書記素で分割出来るらしい
 const segmenter = new Intl.Segmenter("ja", {granularity: "grapheme"});
 function grapheme_split(text)
@@ -113,6 +159,13 @@ function grapheme_split(text)
     }
     return array;
 }
+CreateLyricsContainer = (text)=>{
+    return new RubyKaraokeLyricsContainer(text,grapheme_split);
+}
+
+}());
+
+
 
 var EditModeInitializer;
 var PointModeInitializer;
@@ -147,7 +200,22 @@ function TabChange(e)
         case "test":
             if (tab_test.checked) return;
             TestModeInitializer.Terminalize();
-        break;    }
+        break;
+    }
+
+    if (document.getElementById("AutoSave").checked)
+    {
+        localStorage.setItem("RhythmiKaRuTTE_as_Karaokelyrics",textarea.value);
+        localStorage.setItem("RhythmiKaRuTTE_as_enable","true");
+    }
+    else
+    {
+        localStorage.removeItem("RhythmiKaRuTTE_as_enable");
+        const aslyrics = localStorage.getItem("RhythmiKaRuTTE_as_Karaokelyrics");
+        if (aslyrics !== null && aslyrics === "")
+            localStorage.removeItem("RhythmiKaRuTTE_as_Karaokelyrics");
+    }
+
     if (tab_edit.checked)
     {
         EditModeInitializer.Initialize();
@@ -167,7 +235,14 @@ function TabChange(e)
     {
         TestModeInitializer.Initialize();
         LastMode = "test";
-    }}
+    }
+}
+
+const aslyrics = localStorage.getItem("RhythmiKaRuTTE_as_Karaokelyrics");
+if (aslyrics !== null) textarea.value =  aslyrics;
+if (localStorage.getItem("RhythmiKaRuTTE_as_enable"))
+    document.getElementById("AutoSave").checked = true;
+
 
 tab_edit.addEventListener("change",TabChange);
 tab_point.addEventListener("change",TabChange);
@@ -176,14 +251,3 @@ tab_test.addEventListener("change",TabChange);
 
 }());
 
-(function Mode_Edit(){
-
-    function Initialize()
-    {
-    }
-    function Terminalize()
-    {
-
-    }
-    EditModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};
-}());

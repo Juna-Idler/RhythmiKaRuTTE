@@ -219,7 +219,7 @@ function after_option_classes(option)
 
 function Initialize()
 {
-    const lyrics = new RubyKaraokeLyricsContainer(textarea.value,grapheme_split);
+    const lyrics = CreateLyricsContainer(textarea.value);
     ruby_parent = lyrics.atRubyTag.ruby_parent;
     ruby_begin = lyrics.atRubyTag.ruby_begin;
     ruby_end = lyrics.atRubyTag.ruby_end;

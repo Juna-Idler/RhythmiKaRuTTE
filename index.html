@@ -19,6 +19,7 @@ button, input, select, textarea {
     height :100%;
     padding:2px;
     box-sizing: border-box;
+    user-select: none;
 }
 #PlayerArea{
     display: flex;
@@ -39,9 +40,14 @@ button, input, select, textarea {
     text-align: center;
     border: black 0px solid;
 }
-.vcenter{
+.flex_v{
     display: flex;
     flex-direction: column;
+    justify-content: center;
+}
+.flex_h{
+    display: flex;
+    flex-direction:row;
     justify-content: center;
 }
 #HelpButton
@@ -52,7 +58,7 @@ button, input, select, textarea {
     border: black 1px solid;
     line-height: 32px;
 }
-#HelpSwitch
+#HelpSwitch,#EditOutputSwitch
 {
     display: none;
 }
@@ -151,8 +157,8 @@ input[name="mode_tab"]
     height: 115%;
     resize:none;
     flex:1 1 auto;
-    margin: 4px;
-    padding: 4px;
+    margin: 2px;
+    padding: 2px;
     white-space: pre;
 }
 .bottom_controls_area
@@ -164,8 +170,54 @@ input[name="mode_tab"]
 }
 .bottom_controls
 {
-    margin :0px 8px;
+    padding: 0rem 2rem;
+    margin :2px 8px;
 }
+#EditOutputOpen
+{
+    vertical-align: middle;
+    border: black 1px solid;
+    background-color:#EEEEEE;
+}
+#EditOutputSwitch:checked ~ #EditOutputOverlap
+{
+    display: flex;
+}
+#EditOutputOverlap
+{
+    flex-direction: column;
+    position: fixed;
+    display: none;
+    width:100%;
+    height:100%;
+    top:0;left:0;
+    z-index: 1000;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 1.0);
+}
+#EditOutputText
+{
+    resize:none;
+    flex:1 1 auto;
+    margin: 4px;
+    padding: 4px;
+    white-space: pre;
+    box-sizing: border-box;
+}
+#EditOutputBottom
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+#EditOutputClose
+{
+    border: black 1px solid;
+    background-color:#EEEEEE;
+    display: flex;
+    align-items: center;     
+}
+
 
 
 #TagPoint,#TagStamp
@@ -324,7 +376,7 @@ input[name="mode_tab"]
             <option>1000</option>
         </select>
         </span>
-        <span class="playerLabel vcenter">
+        <span class="playerLabel flex_v">
             <label for="HelpSwitch" id="HelpButton">？</label>
         </span>
     </div>
@@ -350,8 +402,30 @@ input[name="mode_tab"]
     <div id="TextEdit" class="TabContent">
         <textarea id="TextArea" spellcheck="false"></textarea>
         <div class="bottom_controls_area">
-            <button id="OutputText" type="button" class="bottom_controls" disabled>出力</button>
-            <label><input type="checkbox" id="AutoSave" class="bottom_controls" disabled>オートセーブ</label>
+            <label for="EditOutputSwitch"  id="EditOutputOpen" class="bottom_controls">出力</label>
+            <label><input type="checkbox" id="AutoSave" class="bottom_controls">オートセーブ</label>
+        </div>
+    </div>
+    <input type="checkbox" id="EditOutputSwitch">
+    <div id="EditOutputOverlap">
+        <textarea id="EditOutputText" spellcheck="false"></textarea>
+        <div  id="EditOutputBottom">
+            <div class="flex_v">
+                <div>
+                    <label><input type="radio" id="EditOutputStandard" name="output_tag_type" checked>普通</label>
+                    <label><input type="radio" id="EditOutputHeadTag" name="output_tag_type">行頭タグだけ</label>
+                    <label><input type="radio" id="EditOutputNoTag" name="output_tag_type">タグを消す</label>
+                </div>
+                <div>
+                    <label><input type="radio" id="EditOutputWithRuby" name="output_ruby_type" checked>ルビ有り</label>
+                    <label><input type="radio" id="EditOutputNoRuby" name="output_ruby_type">ルビ無し</label>
+                    <label><input type="radio" id="EditOutputPhonetic" name="output_ruby_type">読みのみ</label>
+                </div>
+            </div>
+            <div class="flex_h">
+                <button id="Download" class="bottom_controls">ダウンロード</button>
+                <label for="EditOutputSwitch" id="EditOutputClose" class="bottom_controls">戻る</label>
+            </div>
         </div>
     </div>
     <div id="TagPoint" class="TabContent">
@@ -420,6 +494,8 @@ document.getElementById("TextArea").value = `
     <script type='text/javascript' src='WaveViewer.js' defer></script>
 
     <script type='text/javascript' src='Global.js' defer></script>
+
+    <script type='text/javascript' src='Mode_Edit.js' defer></script>
     <script type='text/javascript' src='Mode_Point.js' defer></script>
     <script type='text/javascript' src='Mode_Stamp.js' defer></script>
 

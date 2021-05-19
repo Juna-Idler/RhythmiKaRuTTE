@@ -178,6 +178,16 @@ function StepPrev()
     return false;
 }
 
+function GetCurrentTime()
+{
+    const current_marks = list.children[currentLine].querySelectorAll(".StampMarker");
+    if (0 <= currentTTPos && currentTTPos < current_marks.length)
+    {
+        return current_marks[currentTTPos].dataset.time;
+    }
+    return -1;
+}
+
 function keydown(e)
 {
     e.preventDefault();
@@ -197,14 +207,21 @@ function keydown(e)
                 currentLine = 0;
             currentTTPos = 0;
             MoveCursor();
+            {
+            const time = GetCurrentTime();
+            if (time >= 0) audio.currentTime = time /1000;
+            }
         break;
         case "KeyS":case "ArrowDown":
             if (currentLine + 1 < list.children.length)
                 currentLine++;
             currentTTPos = 0;
             MoveCursor();
+            {
+                const time = GetCurrentTime();
+                if (time >= 0) audio.currentTime = time /1000;
+            }
         break;
-
         case "Space":
         case "Enter":
             {
@@ -238,8 +255,8 @@ function keydown(e)
         case "KeyC":
             audio.currentTime = audio.currentTime + 1;
         break;
-
     }
+    DrawWaveView();
 }
 function keyup(e)
 {
@@ -263,6 +280,7 @@ function keyup(e)
                 mark.title = TimeTagElement.TimeString(audio.currentTime * 1000);
                 StepNext();
                 MoveCursor();
+                DrawWaveView();
             }
         break;
     }
@@ -289,7 +307,7 @@ function append_marker(parent,ref_node,time,option)
 
 function Initialize()
 {
-    const lyrics = new RubyKaraokeLyricsContainer(textarea.value,grapheme_split);
+    const lyrics = CreateLyricsContainer(textarea.value);
     ruby_parent = lyrics.atRubyTag.ruby_parent;
     ruby_begin = lyrics.atRubyTag.ruby_begin;
     ruby_end = lyrics.atRubyTag.ruby_end;
@@ -306,6 +324,7 @@ function Initialize()
             currentLine = i;
             currentTTPos = 0;
             MoveCursor();
+            DrawWaveView();
         };
 
         append_marker(li,null,line.start_time,line.start_option);
@@ -366,6 +385,7 @@ function Initialize()
     document.addEventListener("keyup",keyup,false);
     MoveCursor();
     DrawWaveView = Stamp_DrawWaveView;
+    DrawWaveView();
 }
 
 function serialize(e)

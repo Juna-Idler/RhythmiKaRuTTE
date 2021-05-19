@@ -68,14 +68,14 @@ function onTimeupdate()
 
 function Initialize()
 {
-    const lyrics = new RubyKaraokeLyricsContainer(textarea.value,grapheme_split);
+    const lyrics = CreateLyricsContainer(textarea.value);
 
     const lines = lyrics.lines.filter(line =>{
         if (line.start_time >= 0) return true;
         if (line.units.length > 0 && line.units[0].start_time >= 0) return true;
         return false;
     });
-    lines.push(new RubyKaraokeLyricsLine("[99:59.99] ",lyrics.atRubyTag,grapheme_split));
+    lines.push(new RubyKaraokeLyricsLine("[99:59.99] ",lyrics.atRubyTag));
 
     for (let i = 0; i < lines.length-1;i++)
     {
