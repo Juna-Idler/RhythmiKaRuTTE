@@ -110,7 +110,7 @@ function MoveCursor()
         return;
     }
 
-    if (currentTTPos < 0)
+    if (currentTTPos < 0 || currentTTPos >= marks.length)
         currentTTPos = marks.length - 1;
 
     const mark = marks[currentTTPos];
@@ -236,7 +236,7 @@ function keydown(e)
                     break;
 
                 mark.dataset.time = audio.currentTime * 1000;
-                mark.title = TimeTagElement.TimeString(audio.currentTime * 1000);
+                mark.title = TimeTagElement.TimeString(mark.dataset.time);
                 StepNext();
                 MoveCursor();
             }
@@ -277,7 +277,7 @@ function keyup(e)
                 if (!mark.classList.contains("UpPoint"))
                     break;
                 mark.dataset.time = audio.currentTime * 1000;
-                mark.title = TimeTagElement.TimeString(audio.currentTime * 1000);
+                mark.title = TimeTagElement.TimeString(mark.dataset.time);
                 StepNext();
                 MoveCursor();
                 DrawWaveView();
@@ -292,8 +292,11 @@ function append_marker(parent,ref_node,time,option)
     {
         const marker = document.createElement("span");
         marker.classList.add("StampMarker");
-        marker.dataset.time = time;
-        marker.title = TimeTagElement.TimeString(time);
+        if (option.includes("n"))
+            marker.dataset.time = -1;
+        else
+            marker.dataset.time = time;
+        marker.title = (marker.dataset.time < 0) ? "null" : TimeTagElement.TimeString(marker.dataset.time);
         if (option.includes("u"))
         {
             marker.classList.add("UpPoint");
@@ -392,7 +395,9 @@ function serialize(e)
 {
     if (e.classList.contains("StampMarker"))
     {
-        const option = (e.classList.contains("UpPoint")) ? "pu" : "p";
+        const option = (e.classList.contains("UpPoint")) ? "up" : "p";
+        if (e.dataset.time < 0)
+            return TimeTagElement.TimeString_option(0,option + "n");
         return TimeTagElement.TimeString_option(e.dataset.time,option);
     }
     else if (e.classList.contains("StampChar"))

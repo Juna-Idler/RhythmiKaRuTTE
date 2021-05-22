@@ -348,7 +348,7 @@ class RubyKaraokeLyricsLine
                         break;
                     }
                 }
-                const divtime = (prev.time * nc + nt * prev.count) / (preb.count + nt);
+                const divtime = (prev.time * nc + nt * prev.count) / (prev.count + nt);
                 this.units[i].end_time = this.units[i+1].start_time = divtime;
             }
             else

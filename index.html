@@ -252,35 +252,35 @@ input[name="mode_tab"]
     margin: 0px;
     border-bottom: 1px solid gray;
 }
-.PointChar,.PointHead,.PointTail
-{
+
+.PointMarker{
     margin: 0px;
     padding-left: 0px;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     cursor:default;
 }
-.PointChar::before,.PointHead::before{
-    content: "[";
+
+.MarkPoint{
+    color: #888888;
+
 }
-.PointChar::after,.PointTail::after{
-    content: "]";
+.MarkUpPoint{
+    color: #888888;
+
+}
+.NotMarkPoint{
+    color: transparent;
+
 }
 
-.PointBefore::before,.PointAfter::after,
-.PointHead.PointBefore,.PointTail.PointAfter
+.PointChar
 {
-    color: #888888;
-}
-.UpPointBefore::before,.UpPointAfter::after,
-.PointHead.UpPointBefore,.PointTail.UpPointAfter
-{
-    color: #FFFF00;
-}
-.NotPointBefore::before,.NotPointAfter::after,
-.PointHead.NotPointBefore,.PointTail.NotPointAfter
-{
-    color: transparent;
+    margin: 0px;
+    padding-left: 0px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor:default;
 }
 
 #TagPointCursor,#TagStampCursor
@@ -298,9 +298,12 @@ input[name="mode_tab"]
 }
 
 .StampMarker{
-    color: #888888;
+    color: #AAAA44;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+}
+.StampMarker[data-time="-1"]{
+    color: #666666;
 }
 .UpPoint
 {
