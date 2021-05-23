@@ -224,6 +224,7 @@ function keydown(e)
         break;
         case "Space":
         case "Enter":
+            if (!e.repeat)
             {
                 const line = list.children[currentLine];
                 const marks = line.querySelectorAll(".StampMarker");
@@ -383,7 +384,8 @@ function Initialize()
         list.appendChild(li);
     });
 
-    currentLine = 0;
+    if (currentLine >= list.children.length)
+        currentLine = list.children.length;
     document.addEventListener("keydown",keydown,false);
     document.addEventListener("keyup",keyup,false);
     MoveCursor();

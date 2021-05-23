@@ -248,7 +248,8 @@ function Initialize()
         list.appendChild(li);
     });
 
-    currentLine = 0;
+    if (currentLine >= list.children.length)
+        currentLine = list.children.length;
     MoveCursor();
     document.addEventListener("keydown",keydown,false);
 }

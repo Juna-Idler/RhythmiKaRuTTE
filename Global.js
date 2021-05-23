@@ -45,6 +45,10 @@ var fragmentPlayer = null;
         text.textContent = "再生速度 ×" + (audio.playbackRate).toFixed(2);
     }
 
+//フォーカスがあるとアローキーで操作が発生してしまう
+//が、こうするとクロームの場合、縦…のメニューボタンが効かなくなる
+    audio.addEventListener("focus",()=>{audio.blur()});
+
 }());
 
 
