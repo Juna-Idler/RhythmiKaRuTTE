@@ -2,23 +2,13 @@
 (function Mode_Edit(){
 
 const outputtext = document.getElementById("EditOutputText");
-
-
 var lyrics;
+
 document.getElementById("EditOutputOpen").onclick = (e)=>{
     lyrics = CreateLyricsContainer(textarea.value);
-    standard();
+    onchange();
 };
 
-const standard_radio = document.getElementById("EditOutputStandard");
-const headtag_radio = document.getElementById("EditOutputHeadTag");
-const notag_radio = document.getElementById("EditOutputNoTag");
-const withruby_radio = document.getElementById("EditOutputWithRuby");
-const noruby_radio = document.getElementById("EditOutputNoRuby");
-const phonetic_radio = document.getElementById("EditOutputPhonetic");
-
-standard_radio.onclick = headtag_radio.onclick = notag_radio.onclick =
-withruby_radio.onclick = noruby_radio.onclick = phonetic_radio.onclick =
 function onchange()
 {
     if (standard_radio.checked)
@@ -34,6 +24,17 @@ function onchange()
         notag();
     }
 }
+
+
+const standard_radio = document.getElementById("EditOutputStandard");
+const headtag_radio = document.getElementById("EditOutputHeadTag");
+const notag_radio = document.getElementById("EditOutputNoTag");
+const withruby_radio = document.getElementById("EditOutputWithRuby");
+const noruby_radio = document.getElementById("EditOutputNoRuby");
+const phonetic_radio = document.getElementById("EditOutputPhonetic");
+
+standard_radio.onclick = headtag_radio.onclick = notag_radio.onclick =
+withruby_radio.onclick = noruby_radio.onclick = phonetic_radio.onclick = onchange;
 
 function standard()
 {
@@ -154,7 +155,7 @@ function notag()
     document.getElementById('Download').addEventListener('click', (e)=>{
         e.preventDefault();
         const text = document.getElementById('EditOutputText').value;
-        const blob = new Blob(new Uint8Array([0xEF, 0xBB, 0xBF]),[text], {type: 'text/plain'});
+        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]),text], {type: 'text/plain'});
 //        const blob = new Blob([text], {type: 'text/plain'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
