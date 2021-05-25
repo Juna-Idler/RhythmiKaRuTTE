@@ -3,10 +3,11 @@
 const list = document.getElementById('TestLyricsView');
 
 const activeline_fadeout_time = "0.5s";
+var time_offset = 0;
 
 function Tick(timestamp)
 {
-    const now = audio.currentTime * 1000;
+    const now = ((audio.currentTime - time_offset) < 0 ? 0 : (audio.currentTime - time_offset)) * 1000;
 
     const lines = list.querySelectorAll("li");
     for (let i = 0;i < lines.length;i++)
@@ -69,13 +70,14 @@ function onTimeupdate()
 function Initialize()
 {
     const lyrics = CreateLyricsContainer(textarea.value);
+    time_offset = lyrics.atTag.offset;
 
     const lines = lyrics.lines.filter(line =>{
         if (line.start_time >= 0) return true;
         if (line.units.length > 0 && line.units[0].start_time >= 0) return true;
         return false;
     });
-    lines.push(new RubyKaraokeLyricsLine("[99:59.99] ",lyrics.atRubyTag));
+    lines.push(new RubyKaraokeLyricsLine("[99:59.99] ",lyrics.atTag));
 
     for (let i = 0; i < lines.length-1;i++)
     {

@@ -200,8 +200,8 @@ class RubyUnit
 })(window);
     
 
-//ルビ指定のためのテキスト内の@行処理
-class AtRubyTag
+//ルビ指定（だけじゃないけど）のためのテキスト内の@行処理
+class AtTagContainer
 {
     constructor(parent = "｜" ,begin = "《" ,end = "》")
     {
@@ -209,9 +209,11 @@ class AtRubyTag
         this.ruby_begin = begin;
         this.ruby_end = end;
 
+        this.offset = 0;//秒単位
+
         this.rubying = [];
     }
-    LoadAtRubyTag(lyricstext)
+    LoadAtTag(lyricstext)
     {
         this.lines = [];
         lyricstext.split(/\r\n|\r|\n/).forEach(line => {
@@ -231,7 +233,42 @@ class AtRubyTag
                 {
                     this.ruby_end = value;
                 }
+                else if (name == "ruby_set")
+                {
+                    //ルビ指定にタグと紛らわしい[]を使わないとするなら一行で書ける @ruby_set=[｜][《][》]
+                    const mat = value.match(/\[([^\[\]]+)\]\[([^\[\]]+)\]\[([^\[\]]+)\]/);
+                    if (mat)
+                    {
+                        this.ruby_parent = mat[1];
+                        this.ruby_begin = mat[2];
+                        this.ruby_end = mat[3];
+                    }
+                }
+                else if (name == "ruby")
+                {//今回は使わないけど、一応読み込みだけはしておく
+                    this.rubying.push(value);
+                }
+                else if (name == "offset")
+                {
+                    //@offsetはあったほうが地味に便利
+                    this.offset = Number(value);
+                    if (this.offset >= 10 || this.offset <= -10)
+                        this.offset = this.offset / 1000;
+                }
+                else
+                {//使う予定はないがとりあえず保存だけはしておく
+                    this[name] = value;
+                }
             }
+            const offsettag = line.match(/^\[offset:([^\]]+)\]$/);
+            if (offsettag)
+            {
+                //[]タグは知らんけど、[offset:ぐらいは読んでやってもいい
+                    this.offset = Number(offsettag[1]);
+                    if (this.offset >= 10 || this.offset <= -10)
+                        this.offset = this.offset / 1000;
+            }
+
         });
     }
 
@@ -273,10 +310,10 @@ class AtRubyTag
 
 class RubyKaraokeLyricsLine
 {
-    constructor(textline,atrubytag,split = Array.from)
+    constructor(textline,atTag,split = Array.from)
     {
         this.units = [];
-        const ruby_units = atrubytag.Translate(textline);
+        const ruby_units = atTag.Translate(textline);
         for (let i = 0; i < ruby_units.length;i++)
         {
             if (ruby_units[i].hasRuby)
@@ -368,12 +405,12 @@ class RubyKaraokeLyricsContainer
     //厳密に書記素で分割したいなら、splitに文字列を取って文字配列を返す適当な関数を
     constructor(lyricstext,split = Array.from)
     {
-        this.atRubyTag = new AtRubyTag();
-        this.atRubyTag.LoadAtRubyTag(lyricstext);
+        this.atTag = new AtTagContainer();
+        this.atTag.LoadAtTag(lyricstext);
 
         this.lines = [];
         lyricstext.split(/\r\n|\r|\n/).forEach(line => {
-            this.lines.push(new RubyKaraokeLyricsLine(line,this.atRubyTag,split));
+            this.lines.push(new RubyKaraokeLyricsLine(line,this.atTag,split));
         });
 
     }

@@ -42,9 +42,9 @@ function standard()
     const ruby = withruby_radio.checked;
     const noruby = noruby_radio.checked;
 
-    const ruby_parent = lyrics.atRubyTag.ruby_parent;
-    const ruby_begin = lyrics.atRubyTag.ruby_begin;
-    const ruby_end = lyrics.atRubyTag.ruby_end;
+    const ruby_parent = lyrics.atTag.ruby_parent;
+    const ruby_begin = lyrics.atTag.ruby_begin;
+    const ruby_end = lyrics.atTag.ruby_end;
 
     let output = "";
     lyrics.lines.forEach(line=>{
@@ -101,9 +101,9 @@ function headtag()
     const ruby = withruby_radio.checked;
     const noruby = noruby_radio.checked;
 
-    const ruby_parent = lyrics.atRubyTag.ruby_parent;
-    const ruby_begin = lyrics.atRubyTag.ruby_begin;
-    const ruby_end = lyrics.atRubyTag.ruby_end;
+    const ruby_parent = lyrics.atTag.ruby_parent;
+    const ruby_begin = lyrics.atTag.ruby_begin;
+    const ruby_end = lyrics.atTag.ruby_end;
 
     let output = "";
     lyrics.lines.forEach(line=>{
@@ -131,9 +131,9 @@ function notag()
     const ruby = withruby_radio.checked;
     const noruby = noruby_radio.checked;
 
-    const ruby_parent = lyrics.atRubyTag.ruby_parent;
-    const ruby_begin = lyrics.atRubyTag.ruby_begin;
-    const ruby_end = lyrics.atRubyTag.ruby_end;
+    const ruby_parent = lyrics.atTag.ruby_parent;
+    const ruby_begin = lyrics.atTag.ruby_begin;
+    const ruby_end = lyrics.atTag.ruby_end;
 
     let output = "";
     lyrics.lines.forEach(line=>{

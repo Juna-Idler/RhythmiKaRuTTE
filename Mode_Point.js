@@ -186,9 +186,9 @@ function create_pointmarker(time,option)
 function Initialize()
 {
     const lyrics = CreateLyricsContainer(textarea.value);
-    ruby_parent = lyrics.atRubyTag.ruby_parent;
-    ruby_begin = lyrics.atRubyTag.ruby_begin;
-    ruby_end = lyrics.atRubyTag.ruby_end;
+    ruby_parent = lyrics.atTag.ruby_parent;
+    ruby_begin = lyrics.atTag.ruby_begin;
+    ruby_end = lyrics.atTag.ruby_end;
 
     lyrics.lines.forEach(line=>{
         const li = document.createElement("li");
