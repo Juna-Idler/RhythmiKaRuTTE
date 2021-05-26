@@ -13,10 +13,10 @@ https://github.com/Juna-Idler/AddAtRuby
 https://youtu.be/J0tASd1eH_8
 
 
-### インスパイア
+## インスパイア
 http://suwa.pupu.jp/RhythmicaLyrics.html
 
-まあ昔C#やってて途中で飽きたんだけど
+まあ昔C#でもやってて途中で飽きたんだけど
 http://juna-idler.blogspot.com/2016/05/rhythmkatte-version-01.html
 
 最近（でもなく、それこそもっと前から可能であったが）のブラウザは色々できるんだと今更再認識した。
