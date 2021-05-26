@@ -3,12 +3,14 @@
 RhythmicalにKaraoke歌詞（with Ruby）のTimeTagをEditする
 
 
-まだ未完成だがこんな感じ
+まあまあ完成だがこんな感じ
 https://juna-idler.github.io/RhythmiKaRuTTE/
-
 
 ルビ振りテキストはとりあえずこれで
 https://github.com/Juna-Idler/AddAtRuby
+
+ちょっと動画録ってみた
+https://youtu.be/J0tASd1eH_8
 
 
 ### インスパイア
