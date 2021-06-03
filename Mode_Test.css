@@ -1,0 +1,48 @@
+#TTTest{
+    flex:1 1 auto;
+    overflow-y :hidden;
+
+}
+
+#TestLyricsView {
+    text-align: center;
+    background-color: black;
+    line-height: 2;
+    margin:0;
+    padding-left: 4rem;
+    font-size: 2.0rem;
+    list-style-type: decimal-leading-zero;
+    overflow-y :scroll;
+    width: 100%;
+
+
+}
+
+.KaraokeLine{
+    transition-duration: 0s;
+    transition-property: color,text-shadow;
+}
+.KaraokeStanbyLine {
+    color :white;
+    text-shadow: 2px  2px 3px navy,
+            -2px  2px 3px navy,
+             2px -2px 3px navy,
+            -2px -2px 3px navy;
+
+
+}
+.KaraokeActiveLine {
+    color :white;
+    text-shadow: 2px  2px 3px blue,
+            -2px  2px 3px blue,
+             2px -2px 3px blue,
+            -2px -2px 3px blue;
+
+}
+.KaraokeActiveWord {
+    color :white;
+    text-shadow: 2px  2px 3px red,
+                -2px  2px 3px red,
+                2px -2px 3px red,
+                -2px -2px 3px red;
+}

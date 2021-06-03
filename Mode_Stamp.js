@@ -1,6 +1,17 @@
 
 (function Mode_Stamp(){
 
+const TagStamp = document.getElementById("TagStamp");
+TagStamp.innerHTML =`
+<div id="TagStampListScroll">
+<ol id="TagStampList">
+</ol>
+<div id="TagStampCursor">▲</div>
+</div>
+<div class="bottom_controls_area">
+</div>
+`;
+
 const list = document.getElementById("TagStampList");
 const cursor = document.getElementById("TagStampCursor");
 
@@ -327,9 +338,9 @@ function append_marker(parent,ref_node,time,option)
     }
 }
 
-function Initialize()
+function Initialize(serialize)
 {
-    const lyrics = CreateLyricsContainer(textarea.value);
+    const lyrics = CreateLyricsContainer(serialize);
     ruby_parent = lyrics.atTag.ruby_parent;
     ruby_begin = lyrics.atTag.ruby_begin;
     ruby_end = lyrics.atTag.ruby_end;
@@ -411,7 +422,7 @@ function Initialize()
     DrawWaveView();
 }
 
-function serialize(e)
+function Serialize(e)
 {
     if (e.classList.contains("StampMarker"))
     {
@@ -446,24 +457,25 @@ function Terminalize()
                     if (e.tagName.toLowerCase() === "rt")
                         parent_text = e.textContent;
                     else
-                        ruby_text += serialize(e);
+                        ruby_text += Serialize(e);
                 }
                 text += ruby_parent + parent_text + ruby_begin + ruby_text + ruby_end;
             }
             else
             {
-                text += serialize(li.children[j]);
+                text += Serialize(li.children[j]);
             }
         }
         text += "\n";
     }
-    textarea.value = text.slice(0,-1);    
 
     while (list.firstChild)
         list.firstChild.remove();
     document.removeEventListener("keyup",keyup,false);
     document.removeEventListener("keydown",keydown,false);
     DrawWaveView = DefaultDrawWaveView;
+
+    return text.slice(0,-1);
 }
 
 StampModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};

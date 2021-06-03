@@ -2,6 +2,12 @@
 <html>
 <meta charset="utf-8">
 <title>RhythmiKaRuTTE</title>
+
+<link rel="stylesheet" href="Mode_Edit.css">
+<link rel="stylesheet" href="Mode_Point.css">
+<link rel="stylesheet" href="Mode_Stamp.css">
+<link rel="stylesheet" href="Mode_Test.css">
+
 <style>
 html,body{
     height :100%;
@@ -58,7 +64,7 @@ button, input, select, textarea {
     border: black 1px solid;
     line-height: 32px;
 }
-#HelpSwitch,#EditOutputSwitch
+#HelpSwitch
 {
     display: none;
 }
@@ -106,8 +112,6 @@ button, input, select, textarea {
     background-color: black;
 }
 
-
-
 #TabLabels
 {
     flex: 0 1 auto;
@@ -146,21 +150,6 @@ input[name="mode_tab"]
     display:flex;
 }
 
-#TextEdit
-{
-    height :100%;
-    flex-direction: column;
-    flex: 1 1 auto;
-}    
-#TextArea
-{
-    height: 115%;
-    resize:none;
-    flex:1 1 auto;
-    margin: 2px;
-    padding: 2px;
-    white-space: pre;
-}
 .bottom_controls_area
 {
     display: flex;
@@ -173,184 +162,7 @@ input[name="mode_tab"]
     padding: 0rem 2rem;
     margin :2px 8px;
 }
-#EditOutputOpen
-{
-    vertical-align: middle;
-    border: black 1px solid;
-    background-color:#EEEEEE;
-}
-#EditOutputSwitch:checked ~ #EditOutputOverlap
-{
-    display: flex;
-}
-#EditOutputOverlap
-{
-    flex-direction: column;
-    position: fixed;
-    display: none;
-    width:100%;
-    height:100%;
-    top:0;left:0;
-    z-index: 1000;
-    box-sizing: border-box;
-    background-color: rgba(255, 255, 255, 1.0);
-}
-#EditOutputText
-{
-    resize:none;
-    flex:1 1 auto;
-    margin: 4px;
-    padding: 4px;
-    white-space: pre;
-    box-sizing: border-box;
-}
-#EditOutputBottom
-{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-#EditOutputClose
-{
-    border: black 1px solid;
-    background-color:#EEEEEE;
-    display: flex;
-    align-items: center;     
-}
 
-
-
-#TagPoint,#TagStamp
-{
-    flex-direction: column;
-
-    height: 100%;
-    flex: 1 1 auto;
-
-    user-select: none;
-    overflow-y :hidden;
-
-}
-#TagPointListScroll,#TagStampListScroll
-{
-    flex:1 1 auto;
-    overflow-y :scroll;
-    position: relative;
-    margin-bottom: 2px;
-    border: solid 1px black;
-    background-color: #002200;
-}
-#TagPointList,#TagStampList
-{
-    color: white;
-    margin:0;
-    font-size: 1.2rem;
-    list-style-type: decimal-leading-zero;
-}
-.PointLine{
-    line-height: 2.0;
-    margin: 0px;
-    border-bottom: 1px solid gray;
-}
-
-.PointMarker{
-    margin: 0px;
-    padding-left: 0px;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    cursor:default;
-}
-
-.MarkPoint{
-    color: #AAAA44;
-}
-.MarkPoint[data-time="-1"]{
-    color: #666666;
-}
-.NotMarkPoint{
-    color: transparent;
-}
-
-.PointChar
-{
-    margin: 0px;
-    padding-left: 0px;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    cursor:default;
-}
-
-#TagPointCursor,#TagStampCursor
-{
-    color: #FF0000;
-    position: absolute;
-    font-size: 0.5rem;
-    cursor:default;
-}
-
-.StampLine{
-    line-height: 2.0;
-    margin: 0px;
-    border-bottom: 1px solid gray;
-}
-
-.StampMarker{
-    color: #AAAA44;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
-.StampMarker[data-time="-1"]{
-    color: #666666;
-}
-
-#TTTest{
-    flex:1 1 auto;
-    overflow-y :hidden;
-
-}
-
-#TestLyricsView {
-    text-align: center;
-    background-color: black;
-    line-height: 2;
-    margin:0;
-    padding-left: 4rem;
-    font-size: 2.0rem;
-    list-style-type: decimal-leading-zero;
-    overflow-y :scroll;
-    width: 100%;
-
-
-}
-
-.KaraokeLine{
-    transition-duration: 0s;
-    transition-property: color,text-shadow;
-}
-.KaraokeStanbyLine {
-    color :white;
-    text-shadow: 2px  2px 3px navy,
-            -2px  2px 3px navy,
-             2px -2px 3px navy,
-            -2px -2px 3px navy;
-
-
-}
-.KaraokeActiveLine {
-    color :white;
-    text-shadow: 2px  2px 3px blue,
-            -2px  2px 3px blue,
-             2px -2px 3px blue,
-            -2px -2px 3px blue;
-
-}
-.KaraokeActiveWord {
-    color :white;
-    text-shadow: 2px  2px 3px red,
-                -2px  2px 3px red,
-                2px -2px 3px red,
-                -2px -2px 3px red;
-}
 
 
 </style>
@@ -396,52 +208,10 @@ input[name="mode_tab"]
         <label for="TabTest" id="TabTestLabel" class="tab_label">TTTest</label>
     </div>
     <div id="TextEdit" class="TabContent">
-        <textarea id="TextArea" spellcheck="false"></textarea>
-        <div class="bottom_controls_area">
-            <label for="EditOutputSwitch"  id="EditOutputOpen" class="bottom_controls">出力</label>
-            <label><input type="checkbox" id="AutoSave" class="bottom_controls">オートセーブ</label>
-        </div>
-    </div>
-    <input type="checkbox" id="EditOutputSwitch">
-    <div id="EditOutputOverlap">
-        <textarea id="EditOutputText" spellcheck="false"></textarea>
-        <div  id="EditOutputBottom">
-            <div class="flex_v">
-                <div>
-                    <label><input type="radio" id="EditOutputStandard" name="output_tag_type" checked>普通</label>
-                    <label><input type="radio" id="EditOutputHeadTag" name="output_tag_type">行頭タグだけ</label>
-                    <label><input type="radio" id="EditOutputNoTag" name="output_tag_type">タグを消す</label>
-                </div>
-                <div>
-                    <label><input type="radio" id="EditOutputWithRuby" name="output_ruby_type" checked>ルビ有り</label>
-                    <label><input type="radio" id="EditOutputNoRuby" name="output_ruby_type">ルビ無し</label>
-                    <label><input type="radio" id="EditOutputPhonetic" name="output_ruby_type">読みのみ</label>
-                </div>
-            </div>
-            <div class="flex_h">
-                <button id="Download" class="bottom_controls">ダウンロード</button>
-                <label for="EditOutputSwitch" id="EditOutputClose" class="bottom_controls">戻る</label>
-            </div>
-        </div>
     </div>
     <div id="TagPoint" class="TabContent">
-        <div id="TagPointListScroll">
-            <ol id="TagPointList">
-            </ol>
-            <div id="TagPointCursor">▲</div>
-        </div>
-        <div class="bottom_controls_area">
-            <button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
-        </div>
     </div>
     <div id="TagStamp" class="TabContent">
-        <div id="TagStampListScroll">
-            <ol id="TagStampList">
-            </ol>
-            <div id="TagStampCursor">▲</div>
-        </div>
-        <div class="bottom_controls_area">
-        </div>
     </div>
     <div id="TTTest" class="TabContent">
         <ol id="TestLyricsView">

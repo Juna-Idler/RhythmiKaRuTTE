@@ -67,9 +67,11 @@ function onTimeupdate()
     Tick();
 }
 
-function Initialize()
+var text_data;
+function Initialize(serialize)
 {
-    const lyrics = CreateLyricsContainer(textarea.value);
+    text_data = serialize;
+    const lyrics = CreateLyricsContainer(serialize);
     time_offset = lyrics.atTag.offset;
 
     const lines = lyrics.lines.filter(line =>{
@@ -161,6 +163,8 @@ function Terminalize()
 
     audio.removeEventListener("play",onPlay);
     audio.removeEventListener("timeupdate",onTimeupdate);
+
+    return text_data;
 }
 TestModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};
 

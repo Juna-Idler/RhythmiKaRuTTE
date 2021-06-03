@@ -2,6 +2,32 @@
 
 (function Mode_Point(){
 
+const TagPoint = document.getElementById("TagPoint");
+
+TagPoint.innerHTML =`
+<div id="TagPointListScroll">
+<ol id="TagPointList">
+</ol>
+<div id="TagPointCursor">▲</div>
+</div>
+<div class="bottom_controls_area">
+<button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
+<label for="PointSettingSwitch"  id="PointSettingOpen" class="bottom_controls">自動チェック</label>
+</div>
+<input type="checkbox" id="PointSettingSwitch">
+<div id="PointSettingOverlap">
+<div>
+<ul>
+    <li><label><input type="checkbox" id="PointCheckん" checked>[ん]にチェック</label></li>
+    <li><label><input type="checkbox" id="PointCheckっ" checked>[っ]にチェック</label></li>
+    <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック</label></li>
+    <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック </label><label><input type="checkbox" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前の文字の後ろにチェック </label><label><input type="checkbox" checked>keyup</label></li>
+</ul>
+<label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">戻る</label>
+</div>
+</div>
+`;
 
 const list = document.getElementById("TagPointList");
 const cursor = document.getElementById("TagPointCursor");
@@ -183,9 +209,9 @@ function create_pointmarker(time,option)
     return marker;
 }
 
-function Initialize()
+function Initialize(serialize)
 {
-    const lyrics = CreateLyricsContainer(textarea.value);
+    const lyrics = CreateLyricsContainer(serialize);
     ruby_parent = lyrics.atTag.ruby_parent;
     ruby_begin = lyrics.atTag.ruby_begin;
     ruby_end = lyrics.atTag.ruby_end;
@@ -318,11 +344,12 @@ function Terminalize()
         }
         text += "\n";
     }
-    textarea.value = text.slice(0,-1);    
 
     while (list.firstChild)
         list.firstChild.remove();
     document.removeEventListener("keydown",keydown,false);
+
+    return text.slice(0,-1);
 }
 
 

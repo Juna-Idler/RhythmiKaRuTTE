@@ -1,6 +1,48 @@
 
 (function Mode_Edit(){
+const TextEdit = document.getElementById("TextEdit");
+TextEdit.innerHTML =`
+<textarea id="TextArea" spellcheck="false"></textarea>
+<div class="bottom_controls_area">
+    <label for="EditOutputSwitch"  id="EditOutputOpen" class="bottom_controls">出力</label>
+    <label><input type="checkbox" id="AutoSave" class="bottom_controls">オートセーブ</label>
+</div>
+`;
 
+const overlap_switch = document.createElement("input");
+overlap_switch.type = "checkbox";
+overlap_switch.id = "EditOutputSwitch";
+
+const overlap = document.createElement("div");
+overlap.id = "EditOutputOverlap";
+overlap.innerHTML = `
+<textarea id="EditOutputText" spellcheck="false"></textarea>
+<div  id="EditOutputBottom">
+    <div class="flex_v">
+        <div>
+            <label><input type="radio" id="EditOutputStandard" name="output_tag_type" checked>普通</label>
+            <label><input type="radio" id="EditOutputHeadTag" name="output_tag_type">行頭タグだけ</label>
+            <label><input type="radio" id="EditOutputNoTag" name="output_tag_type">タグを消す</label>
+        </div>
+        <div>
+            <label><input type="radio" id="EditOutputWithRuby" name="output_ruby_type" checked>ルビ有り</label>
+            <label><input type="radio" id="EditOutputNoRuby" name="output_ruby_type">ルビ無し</label>
+            <label><input type="radio" id="EditOutputPhonetic" name="output_ruby_type">読みのみ</label>
+        </div>
+    </div>
+    <div class="flex_h">
+        <button id="Download" class="bottom_controls">ダウンロード</button>
+        <label for="EditOutputSwitch" id="EditOutputClose" class="bottom_controls">戻る</label>
+    </div>
+</div>
+`;
+
+const parent = TextEdit.parentElement;
+parent.insertBefore(overlap_switch,TextEdit);
+parent.insertBefore(overlap,TextEdit);
+
+
+const textarea = document.getElementById("TextArea");
 const outputtext = document.getElementById("EditOutputText");
 var lyrics;
 
@@ -190,12 +232,13 @@ function notag()
 
 
 
-function Initialize()
+function Initialize(serialize)
 {
+    textarea.value = serialize;
 }
 function Terminalize()
 {
-
+    return textarea.value;
 }
 EditModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};
 

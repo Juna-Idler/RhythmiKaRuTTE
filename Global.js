@@ -1,5 +1,4 @@
 
-const textarea = document.getElementById("TextArea");
 const audio = document.getElementById("AudioPlayer");
 const canvas = document.getElementById( 'WaveCanvas' );
 const magnification_selector = document.getElementById('MagnificationSelector');
@@ -187,29 +186,30 @@ var LastMode = "edit";
 
 function TabChange(e)
 {
+    let serialize = "";
     switch (LastMode)
     {
         case "edit":
             if (tab_edit.checked) return;
-            EditModeInitializer.Terminalize();
+            serialize = EditModeInitializer.Terminalize();
         break;
         case "point":
             if (tab_point.checked) return;
-            PointModeInitializer.Terminalize();
+            serialize = PointModeInitializer.Terminalize();
         break;
         case "stamp":
             if (tab_stamp.checked) return;
-            StampModeInitializer.Terminalize();
+            serialize = StampModeInitializer.Terminalize();
         break;
         case "test":
             if (tab_test.checked) return;
-            TestModeInitializer.Terminalize();
+            serialize = TestModeInitializer.Terminalize();
         break;
     }
 
     if (document.getElementById("AutoSave").checked)
     {
-        localStorage.setItem("RhythmiKaRuTTE_as_Karaokelyrics",textarea.value);
+        localStorage.setItem("RhythmiKaRuTTE_as_Karaokelyrics",serialize);
         localStorage.setItem("RhythmiKaRuTTE_as_enable","true");
     }
     else
@@ -222,30 +222,35 @@ function TabChange(e)
 
     if (tab_edit.checked)
     {
-        EditModeInitializer.Initialize();
+        EditModeInitializer.Initialize(serialize);
         LastMode = "edit";
     }
     else if (tab_point.checked)
     {
-        PointModeInitializer.Initialize();
+        PointModeInitializer.Initialize(serialize);
         LastMode = "point";
     }
     else if (tab_stamp.checked)
     {
-        StampModeInitializer.Initialize();
+        StampModeInitializer.Initialize(serialize);
         LastMode = "stamp";
     }
     else if (tab_test.checked)
     {
-        TestModeInitializer.Initialize();
+        TestModeInitializer.Initialize(serialize);
         LastMode = "test";
     }
 }
 
-const aslyrics = localStorage.getItem("RhythmiKaRuTTE_as_Karaokelyrics");
-if (aslyrics !== null) textarea.value =  aslyrics;
-if (localStorage.getItem("RhythmiKaRuTTE_as_enable"))
-    document.getElementById("AutoSave").checked = true;
+window.addEventListener("load",e=>
+{
+    const textarea = document.getElementById("TextArea");
+    const aslyrics = localStorage.getItem("RhythmiKaRuTTE_as_Karaokelyrics");
+    if (aslyrics !== null) EditModeInitializer.Initialize(aslyrics);
+    if (localStorage.getItem("RhythmiKaRuTTE_as_enable"))
+        document.getElementById("AutoSave").checked = true;
+});
+
 
 
 tab_edit.addEventListener("change",TabChange);

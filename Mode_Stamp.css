@@ -1,0 +1,82 @@
+#TagStamp
+{
+    flex-direction: column;
+
+    height: 100%;
+    flex: 1 1 auto;
+
+    user-select: none;
+    overflow-y :hidden;
+
+}
+#TagStampListScroll
+{
+    flex:1 1 auto;
+    overflow-y :scroll;
+    position: relative;
+    margin-bottom: 2px;
+    border: solid 1px black;
+    background-color: #002200;
+}
+#TagStampList
+{
+    color: white;
+    margin:0;
+    font-size: 1.2rem;
+    list-style-type: decimal-leading-zero;
+}
+.PointLine{
+    line-height: 2.0;
+    margin: 0px;
+    border-bottom: 1px solid gray;
+}
+
+.PointMarker{
+    margin: 0px;
+    padding-left: 0px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor:default;
+}
+
+.MarkPoint{
+    color: #AAAA44;
+}
+.MarkPoint[data-time="-1"]{
+    color: #666666;
+}
+.NotMarkPoint{
+    color: transparent;
+}
+
+.PointChar
+{
+    margin: 0px;
+    padding-left: 0px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor:default;
+}
+
+#TagPointCursor,#TagStampCursor
+{
+    color: #FF0000;
+    position: absolute;
+    font-size: 0.5rem;
+    cursor:default;
+}
+
+.StampLine{
+    line-height: 2.0;
+    margin: 0px;
+    border-bottom: 1px solid gray;
+}
+
+.StampMarker{
+    color: #AAAA44;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.StampMarker[data-time="-1"]{
+    color: #666666;
+}

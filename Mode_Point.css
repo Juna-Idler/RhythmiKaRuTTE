@@ -1,0 +1,89 @@
+#TagPoint
+{
+    flex-direction: column;
+
+    height: 100%;
+    flex: 1 1 auto;
+
+    user-select: none;
+    overflow-y :hidden;
+
+}
+#TagPointListScroll
+{
+    flex:1 1 auto;
+    overflow-y :scroll;
+    position: relative;
+    margin-bottom: 2px;
+    border: solid 1px black;
+    background-color: #002200;
+}
+#TagPointList
+{
+    color: white;
+    margin:0;
+    font-size: 1.2rem;
+    list-style-type: decimal-leading-zero;
+}
+.PointLine{
+    line-height: 2.0;
+    margin: 0px;
+    border-bottom: 1px solid gray;
+}
+
+.PointMarker{
+    margin: 0px;
+    padding-left: 0px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor:default;
+}
+
+.MarkPoint{
+    color: #AAAA44;
+}
+.MarkPoint[data-time="-1"]{
+    color: #666666;
+}
+.NotMarkPoint{
+    color: transparent;
+}
+
+.PointChar
+{
+    margin: 0px;
+    padding-left: 0px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor:default;
+}
+
+#TagPointCursor
+{
+    color: #FF0000;
+    position: absolute;
+    font-size: 0.5rem;
+    cursor:default;
+}
+
+#PointSettingSwitch
+{
+    display: none;
+}
+#PointSettingSwitch:checked ~ #PointSettingOverlap
+{
+    display: flex;
+}
+#PointSettingOverlap
+{
+    flex-direction: column;
+    position: fixed;
+    display: none;
+    width:100%;
+    height:100%;
+    top:0;left:0;
+    z-index: 1000;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 1.0);
+}
+
