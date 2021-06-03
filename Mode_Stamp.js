@@ -75,8 +75,7 @@ function Stamp_DrawWaveView()
     
                 ctx.fillRect(x,0,1,canvas.height);
                 const next = marks[i].nextElementSibling;
-                if (next && next.textContent && !marks[i].classList.contains("UpPoint") &&
-                    next.tagName.toLowerCase() !== "ruby")
+                if (next && next.textContent && next.tagName.toLowerCase() === "span")
                 {
                     ctx.fillStyle = "white";
                     ctx.fillText(next.textContent, x + 1, canvas.height);
@@ -84,6 +83,25 @@ function Stamp_DrawWaveView()
             }
         });
 
+        let currentText = null;
+        for (let i = 0;i < marks.length;i++)
+        {
+            if (i === currentTTPos)
+                currentText = marks[i].classList.contains("UpPoint") ? "]" : "[]";
+            const next = marks[i].nextElementSibling;
+            if (next && next.textContent && next.tagName.toLowerCase() === "span")
+            {
+                if (i === currentTTPos)
+                    currentText = "[" + next.textContent + "]";
+                else if (currentText != null)
+                    currentText += next.textContent;
+            }
+        }
+        if (currentText != null) {
+            ctx.fillStyle = "white";
+            ctx.textBaseline = "top";
+            ctx.fillText(currentText, nowpoint + 1, 1);
+        }
     }
 
 
