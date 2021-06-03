@@ -54,7 +54,10 @@ class WaveViewer
         const actx = new AudioContext();
         return new WaveViewer(await actx.decodeAudioData(arrayBuffer));
     }
-
+    static async CreateFromFile(file)
+    {
+        return await this.Create(await file.arrayBuffer());
+    }
 
     get isValid() {return this.ms_length != 0;}
 

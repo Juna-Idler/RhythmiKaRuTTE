@@ -312,6 +312,13 @@ class RubyKaraokeLyricsLine
 {
     constructor(textline,atTag,split = Array.from)
     {
+        if (textline[0] === '@')
+        {
+            this.units = [new RubyKaraokeUnit(KaraokeUnit.Create(textline,split),null)];
+            this.start_time = this.end_time =  -1;
+            this.start_option = this.end_option = "";
+            return;
+        }
         this.units = [];
         const ruby_units = atTag.Translate(textline);
         for (let i = 0; i < ruby_units.length;i++)
