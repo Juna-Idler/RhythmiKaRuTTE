@@ -11,20 +11,20 @@ TagPoint.innerHTML =`
 <div id="TagPointCursor">▲</div>
 </div>
 <div class="bottom_controls_area">
-<button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
 <label for="PointSettingSwitch"  id="PointSettingOpen" class="bottom_controls">自動チェック</label>
 </div>
 <input type="checkbox" id="PointSettingSwitch">
 <div id="PointSettingOverlap">
-<div>
+<div id="PointSettingPanel">
 <ul>
     <li><label><input type="checkbox" id="PointCheckん" checked>[ん]にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckっ" checked>[っ]にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック</label></li>
-    <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック </label><label><input type="checkbox" checked>keyup</label></li>
-    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前の文字の後ろにチェック </label><label><input type="checkbox" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック </label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前の文字の後ろにチェック </label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
 </ul>
 <label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">戻る</label>
+<button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
 </div>
 </div>
 `;
@@ -391,6 +391,15 @@ function isNumber(c)
 
 document.getElementById("AutoPointing").onclick = (e)=>{
 
+    const checkん = document.getElementById("PointCheckん").checked;
+    const checkっ = document.getElementById("PointCheckっ").checked;
+    const checkBlankLineHead = document.getElementById("PointCheckBlankLineHead").checked;
+    const checkLineTail = document.getElementById("PointCheckLineTail").checked;
+    const checkLineTail_ku = document.getElementById("PointCheckLineTail_keyup").checked;
+    const checkWordEnd = document.getElementById("PointCheckWordEnd").checked;
+    const checkWordEnd_ku = document.getElementById("PointCheckWordEnd_keyup").checked;
+
+
     for (let i = 0;i < list.children.length;i++)
     {
         const line = list.children[i];
@@ -399,13 +408,12 @@ document.getElementById("AutoPointing").onclick = (e)=>{
 
         if (chars.length == 0)//空行
         {
-            const flag = true;//空行にチェックするフラグ
-            CheckMarker(markers[0],flag);
+            CheckMarker(markers[0],checkBlankLineHead);//空行行頭にチェック
             CheckMarker(markers[markers.length-1],false);//行末は基本無し
             continue;
         }
         if (chars[0].textContent === '@' || chars[0].textContent === '[')
-        {//行頭の"@"や""["は行ごと無視
+        {//行頭の"@"や"["は行ごと無視
             continue;
         }
         CheckMarker(markers[0],false);
@@ -426,9 +434,11 @@ document.getElementById("AutoPointing").onclick = (e)=>{
 
             if (isWhiteSpace( char ))
             {
-                //空白前設定があれば
-                const flag = false;
-                CheckMarker(before,flag);
+                //空白の前の文字の後ろにチェック                
+                if (!isWhiteSpace(pc) && checkWordEnd)
+                    CheckMarker(markers[j * 2],true,checkWordEnd_ku);
+                CheckMarker(before,false);
+
             }
             else if (isAlphabet(char) || isNumber( char ) || isASCIISymbol( char ))
             {
@@ -451,10 +461,10 @@ document.getElementById("AutoPointing").onclick = (e)=>{
                     CheckMarker(before,false);
                     break;
                 case 'ん':
-                    CheckMarker(before,true);
+                    CheckMarker(before,checkん);
                     break;
                 case 'っ':
-                    CheckMarker(before,true);
+                    CheckMarker(before,checkっ);
                     break;
                 default:
                     CheckMarker(before,true);
@@ -465,9 +475,11 @@ document.getElementById("AutoPointing").onclick = (e)=>{
         }
         if (!isWhiteSpace(chars[chars.length-1].textContent))
         {
-            CheckMarker(markers[chars.length * 2],true,true);
+            //行末文字の後ろにチェック
+            CheckMarker(markers[chars.length * 2],checkLineTail,checkLineTail_ku);
         }
     }
+    document.getElementById("PointSettingSwitch").checked = false;
 }
 
 PointModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};
