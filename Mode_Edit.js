@@ -75,7 +75,8 @@ function standard()
             }
             if (ruby)
             {
-                output += rkunit.hasRuby ? (ruby_parent + rkunit.base_text + ruby_begin + phonetic + ruby_end) : phonetic;
+                
+                output += rkunit.hasRuby ? (ruby_parent + TimeTagElement.TimeString(rkunit.start_time) + rkunit.base_text + TimeTagElement.TimeString(rkunit.end_time) + ruby_begin + phonetic + ruby_end) : phonetic;
             }
             else
             {
