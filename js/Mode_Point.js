@@ -21,7 +21,7 @@ TagPoint.innerHTML =`
     <li><label><input type="checkbox" id="PointCheckっ" checked>[っ]にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック </label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
-    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前の文字の後ろにチェック </label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック </label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
 </ul>
 <label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">戻る</label>
 <button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
@@ -434,11 +434,8 @@ document.getElementById("AutoPointing").onclick = (e)=>{
 
             if (isWhiteSpace( char ))
             {
-                //空白の前の文字の後ろにチェック                
-                if (!isWhiteSpace(pc) && checkWordEnd)
-                    CheckMarker(markers[j * 2],true,checkWordEnd_ku);
-                CheckMarker(before,false);
-
+                //空白の前に文字があればチェック
+                CheckMarker(before,!isWhiteSpace(pc) && checkWordEnd,checkWordEnd_ku);
             }
             else if (isAlphabet(char) || isNumber( char ) || isASCIISymbol( char ))
             {
