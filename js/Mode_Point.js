@@ -17,14 +17,14 @@ TagPoint.innerHTML =`
 <div id="PointSettingOverlap">
 <div id="PointSettingPanel">
 <ul>
-    <li><label><input type="checkbox" id="PointCheckん" checked>[ん]にチェック</label></li>
-    <li><label><input type="checkbox" id="PointCheckっ" checked>[っ]にチェック</label></li>
+    <li><label><input type="checkbox" id="PointCheckん" checked>「ん」にチェック</label></li>
+    <li><label><input type="checkbox" id="PointCheckっ" checked>「っ」にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック </label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
     <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック </label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
 </ul>
-<label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">戻る</label>
-<button id="AutoPointing" type="button" class="bottom_controls">自動チェック</button>
+<button id="AutoPointing" type="button" class="bottom_controls">自動チェック開始</button>
+<label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">×</label>
 </div>
 </div>
 `;

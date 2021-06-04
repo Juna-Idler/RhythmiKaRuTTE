@@ -95,17 +95,25 @@
 }
 #PointSettingClose
 {
-    border: 1px solid gray;
-
+    position: absolute;
+    right:8px;
+    top:2px;
+    font-size: 32px;
+    color: black;
+    padding: 0 0;
 }
 
 #PointSettingPanel
 {
+    position: relative;
     background-color: #EEEEEE;
+    text-align: center;
 
     padding: 1rem;
 }
 #TagPoint ul
 {
     list-style-type: none;
+    padding: 0;
+    text-align: left;
 }

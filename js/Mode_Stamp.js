@@ -39,7 +39,8 @@ function Stamp_DrawWaveView()
         const view_end_ms = view_start_ms + (canvas.width * 1000/Magnification);
 
         ctx.font = canvas.height / 4 + "px sans-serif";
-        ctx.textBaseline = "ideographic";
+        ctx.textBaseline = "top";
+
 
         if (currentLine >= list.children.length)
             currentLine = list.children.length - 1;
@@ -69,7 +70,7 @@ function Stamp_DrawWaveView()
                 next.tagName.toLowerCase() !== "ruby")
             {
                 ctx.fillStyle = "white";
-                ctx.fillText(next.textContent, x + 1, canvas.height);
+                ctx.fillText(next.textContent, x + 1, 1);
             }
         }
         sub_lines.forEach(l=>{
@@ -89,7 +90,7 @@ function Stamp_DrawWaveView()
                 if (next && next.textContent && next.tagName.toLowerCase() === "span")
                 {
                     ctx.fillStyle = "white";
-                    ctx.fillText(next.textContent, x + 1, canvas.height);
+                    ctx.fillText(next.textContent, x + 1, 1);
                 }
             }
         });
@@ -110,8 +111,8 @@ function Stamp_DrawWaveView()
         }
         if (currentText != null) {
             ctx.fillStyle = "white";
-            ctx.textBaseline = "top";
-            ctx.fillText(currentText, nowpoint + 1, 1);
+            ctx.textBaseline = "ideographic";
+            ctx.fillText(currentText, nowpoint + 1, canvas.height);
         }
     }
 
