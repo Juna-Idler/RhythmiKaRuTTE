@@ -32,6 +32,8 @@ function Stamp_DrawWaveView()
     const nowpoint = Math.floor(width * 0.3)
     waveViewer.DrawCanvas(canvas,WaveViewTime - (nowpoint * 1000/Magnification),1000/Magnification);
     const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "white";
+    ctx.fillRect(nowpoint,0,1,height);
 
     if (list.children.length > 0)
     {
@@ -115,13 +117,71 @@ function Stamp_DrawWaveView()
             ctx.fillText(currentText, nowpoint + 1, canvas.height);
         }
     }
-
-
-
-    ctx.fillStyle = "white";
-    ctx.fillRect(nowpoint,0,1,height);
 }
 
+
+var grap_x;
+var grap_time;
+var grap_mark = null;
+function onDragMouseMove(e) {
+    const move_x = (e.pageX - grap_x);
+
+    let time = grap_time + (move_x * (1000 / Magnification));
+    time = time < 0 ? 0 : time;
+    grap_mark.dataset.time = time;
+    grap_mark.title = TimeTagElement.TimeString(grap_mark.dataset.time);
+
+    DrawWaveView();
+}
+function onDragMouseUp(e){
+    document.removeEventListener('mousemove', onDragMouseMove, false);
+    document.removeEventListener('mouseup', onDragMouseUp, false);
+    canvas.style.cursor = null;
+
+    document.addEventListener("keydown",keydown,false);
+    canvas.addEventListener("mousemove",onMouseMove, false);
+    audio.style.pointerEvents = null;
+}
+function onMouseDown(e){
+    if (canvas.style.cursor == "grab")
+    {
+        if (grap_mark !== null)
+        {
+            grap_x = e.pageX;
+            grap_time = Number(grap_mark.dataset.time);
+            document.addEventListener("mousemove",onDragMouseMove, false);
+            document.addEventListener("mouseup",onDragMouseUp, false);
+            canvas.style.cursor = "grabbing";
+
+            //都合の悪いイベントを止める
+            document.removeEventListener("keydown",keydown,false);
+            canvas.removeEventListener("mousemove",onMouseMove, false);
+            audio.style.pointerEvents = "none";//オーディオパネルがマウスイベントを喰うのでドラッグ中は透過させる
+        }
+        e.stopImmediatePropagation();
+    }
+}
+function onMouseMove(e){
+    if (e.offsetY <= 16 && audio.paused)
+    {
+        grap_mark = GetCurrentMark();
+        if (grap_mark !== null)
+        {
+            const nowpoint = Math.floor(canvas.width * 0.3)
+            const time_x = (grap_mark.dataset.time - WaveViewTime) * Magnification/1000 + nowpoint;
+            canvas.style.cursor = (time_x <= e.offsetX && e.offsetX < time_x + 16) ?  "grab" : null;
+            return;
+        }
+    }
+    canvas.style.cursor = null;
+}
+
+
+function GetCurrentMark()
+{
+    const marks = list.children[currentLine].querySelectorAll(".StampMarker");
+    return  (currentTTPos < 0 || currentTTPos >= marks.length) ? null : marks[currentTTPos];
+}
 
 function MoveCursor()
 {
@@ -210,12 +270,8 @@ function StepPrev()
 
 function GetCurrentTime()
 {
-    const current_marks = list.children[currentLine].querySelectorAll(".StampMarker");
-    if (0 <= currentTTPos && currentTTPos < current_marks.length)
-    {
-        return current_marks[currentTTPos].dataset.time;
-    }
-    return -1;
+    const mark = GetCurrentMark();
+    return (mark === null) ? -1 : mark.dataset.time;
 }
 
 function keydown(e)
@@ -256,14 +312,8 @@ function keydown(e)
         case "Enter":
             if (!e.repeat)
             {
-                const line = list.children[currentLine];
-                const marks = line.querySelectorAll(".StampMarker");
-
-                if (currentTTPos < 0 || currentTTPos >= marks.length)
-                    break;
-
-                const mark = marks[currentTTPos];
-                if (mark.classList.contains("UpPoint"))
+                const mark = GetCurrentMark();
+                if (mark === null || mark.classList.contains("UpPoint"))
                     break;
 
                 mark.dataset.time = audio.currentTime * 1000;
@@ -298,14 +348,8 @@ function keyup(e)
         case "Space":
         case "Enter":
             {
-                const line = list.children[currentLine];
-                const marks = line.querySelectorAll(".StampMarker");
-
-                if (currentTTPos < 0 || currentTTPos >= marks.length)
-                    break;
-
-                const mark = marks[currentTTPos];
-                if (!mark.classList.contains("UpPoint"))
+                const mark = GetCurrentMark();
+                if (mark === null || !mark.classList.contains("UpPoint"))
                     break;
                 mark.dataset.time = audio.currentTime * 1000;
                 mark.title = TimeTagElement.TimeString(mark.dataset.time);
@@ -419,8 +463,14 @@ function Initialize(serialize)
     document.addEventListener("keydown",keydown,false);
     document.addEventListener("keyup",keyup,false);
     MoveCursor();
+
+    //"mousedown"のstopImmediatePropagationの為に登録順番を変える
+    SetDefaultCanvasMouseEvent(false);
+    canvas.addEventListener("mousedown",onMouseDown, false);
+    canvas.addEventListener("mousemove",onMouseMove, false);
+    SetDefaultCanvasMouseEvent(true);
+
     DrawWaveView = Stamp_DrawWaveView;
-    DrawWaveView();
 }
 
 function Serialize(e)
@@ -474,6 +524,8 @@ function Terminalize()
         list.firstChild.remove();
     document.removeEventListener("keyup",keyup,false);
     document.removeEventListener("keydown",keydown,false);
+    canvas.removeEventListener("mousemove",onMouseMove, false);
+    canvas.removeEventListener("mousedown",onMouseDown, false);
     DrawWaveView = DefaultDrawWaveView;
 
     return text.slice(0,-1);

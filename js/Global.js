@@ -240,11 +240,11 @@ function TabChange(e)
         TestModeInitializer.Initialize(serialize);
         LastMode = "test";
     }
+    DrawWaveView();
 }
 
 window.addEventListener("load",e=>
 {
-    const textarea = document.getElementById("TextArea");
     const aslyrics = localStorage.getItem("RhythmiKaRuTTE_as_Karaokelyrics");
     if (aslyrics !== null) EditModeInitializer.Initialize(aslyrics);
     if (localStorage.getItem("RhythmiKaRuTTE_as_enable"))
