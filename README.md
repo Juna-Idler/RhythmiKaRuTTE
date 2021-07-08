@@ -10,8 +10,9 @@ https://juna-idler.github.io/RhythmiKaRuTTE/
 https://github.com/Juna-Idler/AddAtRuby
 
 ちょっと動画録ってみた
-https://youtu.be/J0tASd1eH_8
-
+1. https://youtu.be/J0tASd1eH_8 （初回）慣れてないのもあってノーカット37分もある
+2. https://youtu.be/lkpT8otSGJ8 （#2）21/6/15 の状態 こっちはノーカット19分で済んでる
+3. https://youtu.be/y88m08BWH8E （#3）
 
 ## インスパイア
 http://suwa.pupu.jp/RhythmicaLyrics.html
