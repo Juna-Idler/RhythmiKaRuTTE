@@ -81,7 +81,7 @@
                 if (editmode && !textread)
                 {
                     file.text().then(text=>{
-                        textarea.value = text;
+                        TextArea.value = text;
                     })
                     textread = true;
                 }

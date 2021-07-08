@@ -386,7 +386,7 @@ class RubyKaraokeLyricsLine
                 {
                     const next = this.units[j].phonetic.getFirstTime();
                     nc += next.count;
-                    if (next.time < 0)
+                    if (next.time >= 0)
                     {
                         nt = next.time;
                         break;
