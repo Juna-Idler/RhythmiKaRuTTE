@@ -355,9 +355,16 @@ class RubyKaraokeLyricsLine
 
 
         const array = KaraokeUnit.Parse(textline);
-        this.start_time =  (array[0].start_time >= 0 && array[0].text === "") ? array[0].start_time : -1;
-        this.end_time = (array.length > 1 && array[array.length-1].text === "" && array[array.length-2].text === "") ?
-                        array[array.length-1].start_time : -1;
+        if (array[0].start_time >= 0 && (array[0].text === "" || array[0].text.indexOf(atTag.ruby_parent) == 0))
+            this.start_time = array[0].start_time;
+        else
+            this.start_time = -1;
+
+        if (array.length > 1 && array[array.length-1].text === "" &&
+            (array[array.length-2].text === "" || array[array.length-2].text.lastIndexOf(atTag.ruby_end) == (array[array.length-2].text.length - atTag.ruby_end.length)))
+            this.end_time = array[array.length-1].start_time;
+        else
+            this.end_time = -1;
         this.start_option = this.start_time >= 0 ? array[0].option : "";
         this.end_option = this.end_time >= 0 ? array[array.length-1].option : "";
 
