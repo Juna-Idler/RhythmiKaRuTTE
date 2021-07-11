@@ -90,7 +90,7 @@ function Initialize(serialize)
             let next_time = lines[i+1].start_time;
             if (next_time < 0)
                 next_time = lines[i+1].units[0].start_time;
-            lines[i].end_time = next_time;
+            lines[i].end_time = (lines[i].units.length > 0) ? Math.max(lines[i].units[lines[i].units.length-1].end_time,next_time) : next_time;
         }
         lines[i].Complement();
     }
