@@ -13,6 +13,9 @@ https://github.com/Juna-Idler/AddAtRuby
 1. https://youtu.be/J0tASd1eH_8 （初回）慣れてないのもあってノーカット37分もある
 2. https://youtu.be/lkpT8otSGJ8 （#2）21/6/15 の状態 こっちはノーカット19分で済んでる
 3. https://youtu.be/y88m08BWH8E （#3）
+4. https://youtu.be/xDfDRVh8K6U （#4）
+5. https://youtu.be/6-FD5E80pvI （#5前）https://youtu.be/DMKmARc_WHw （#5後）めちゃくちゃ時間がかかった。前編は準備段階含む
+
 
 ## インスパイア
 http://suwa.pupu.jp/RhythmicaLyrics.html
