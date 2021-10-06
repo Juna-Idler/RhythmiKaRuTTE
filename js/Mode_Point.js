@@ -22,6 +22,7 @@ TagPoint.innerHTML =`
     <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック （Mark "blank line" head）</label></li>
     <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック （Mark after last letter of line）</label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
     <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック （Mark blank afeter letter）</label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckAlphabetSyllables">Mark alphabet syllables</label></li>
 </ul>
 <button id="AutoPointing" type="button" class="bottom_controls">Start</button>
 <label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">×</label>
@@ -398,6 +399,7 @@ document.getElementById("AutoPointing").onclick = (e)=>{
     const checkLineTail_ku = document.getElementById("PointCheckLineTail_keyup").checked;
     const checkWordEnd = document.getElementById("PointCheckWordEnd").checked;
     const checkWordEnd_ku = document.getElementById("PointCheckWordEnd_keyup").checked;
+    const checkAlphabetSyllables = document.getElementById("PointCheckAlphabetSyllables").checked;
 
 
     for (let i = 0;i < list.children.length;i++)
@@ -474,6 +476,37 @@ document.getElementById("AutoPointing").onclick = (e)=>{
         {
             //行末文字の後ろにチェック
             CheckMarker(markers[chars.length * 2],checkLineTail,checkLineTail_ku);
+        }
+
+        if (checkAlphabetSyllables)
+        {
+            for (let j = 0;j < chars.length;j++)
+            {
+                if (chars[j].textContent.match(/^[a-zA-Z0-9]$/) != null || isASCIISymbol( chars[j].textContent ))
+                {
+                    let word= chars[j].textContent;
+                    for (let k = j + 1;k < chars.length;k++)
+                    {
+                        if (chars[k].textContent.match(/^[a-zA-Z0-9]$/) != null || isASCIISymbol( chars[k].textContent ))
+                        {
+                            word += chars[k].textContent;
+                            continue;
+                        }
+                        break;
+                    }
+                    const s = syllables(word);
+                    if (s.length > 1)
+                    {
+                        let offset = s[0].length;
+                        for (let l = 1;l < s.length;l++)
+                        {
+                            CheckMarker(markers[(j + offset) * 2 + 1],true);
+                            offset += s[l].length;
+                        }
+                    }
+                    j += word.length;
+                }
+            }
         }
     }
     document.getElementById("PointSettingSwitch").checked = false;
