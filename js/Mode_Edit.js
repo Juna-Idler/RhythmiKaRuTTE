@@ -4,8 +4,8 @@ const TextEdit = document.getElementById("TextEdit");
 TextEdit.innerHTML =`
 <textarea id="TextArea" spellcheck="false"></textarea>
 <div class="bottom_controls_area">
-    <label for="EditOutputSwitch"  id="EditOutputOpen" class="bottom_controls">出力</label>
-    <label><input type="checkbox" id="AutoSave" class="bottom_controls">オートセーブ</label>
+    <label for="EditOutputSwitch"  id="EditOutputOpen" class="bottom_controls">Output</label>
+    <label><input type="checkbox" id="AutoSave" class="bottom_controls">Auto Save</label>
 </div>
 `;
 
@@ -20,9 +20,9 @@ overlap.innerHTML = `
 <div  id="EditOutputBottom">
     <div class="flex_v">
         <div>
-            <label><input type="radio" id="EditOutputStandard" name="output_tag_type" checked>普通</label>
-            <label><input type="radio" id="EditOutputHeadTag" name="output_tag_type">行頭タグだけ</label>
-            <label><input type="radio" id="EditOutputNoTag" name="output_tag_type">タグを消す</label>
+            <label><input type="radio" id="EditOutputStandard" name="output_tag_type" checked>Karaoke</label>
+            <label><input type="radio" id="EditOutputHeadTag" name="output_tag_type">Line Head</label>
+            <label><input type="radio" id="EditOutputNoTag" name="output_tag_type">Remove</label>
         </div>
         <div>
             <label><input type="radio" id="EditOutputWithRuby" name="output_ruby_type" checked>ルビ有り</label>
@@ -31,8 +31,8 @@ overlap.innerHTML = `
         </div>
     </div>
     <div class="flex_h">
-        <button id="Download" class="bottom_controls">ダウンロード</button>
-        <label for="EditOutputSwitch" id="EditOutputClose" class="bottom_controls">戻る</label>
+        <button id="Download" class="bottom_controls">Dwonload</button>
+        <label for="EditOutputSwitch" id="EditOutputClose" class="bottom_controls">Back</label>
     </div>
 </div>
 `;

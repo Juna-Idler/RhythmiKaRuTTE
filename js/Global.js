@@ -41,7 +41,7 @@ var fragmentPlayer = null;
     playbackRate.oninput = (e)=>{
         audio.playbackRate = playbackRate.value;
         const text = document.getElementById('PlaybackRateText');
-        text.textContent = "再生速度 ×" + (audio.playbackRate).toFixed(2);
+        text.textContent = (audio.playbackRate).toFixed(2);
     }
 
 //フォーカスがあるとアローキーで操作が発生してしまう

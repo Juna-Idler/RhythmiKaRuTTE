@@ -11,7 +11,7 @@ TagPoint.innerHTML =`
 <div id="TagPointCursor">▲</div>
 </div>
 <div class="bottom_controls_area">
-<label for="PointSettingSwitch"  id="PointSettingOpen" class="bottom_controls">自動チェック</label>
+<label for="PointSettingSwitch"  id="PointSettingOpen" class="bottom_controls">Auto Pointing</label>
 </div>
 <input type="checkbox" id="PointSettingSwitch">
 <div id="PointSettingOverlap">
@@ -19,11 +19,11 @@ TagPoint.innerHTML =`
 <ul>
     <li><label><input type="checkbox" id="PointCheckん" checked>「ん」にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckっ" checked>「っ」にチェック</label></li>
-    <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック</label></li>
-    <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック </label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
-    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック </label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック （Mark "blank line" head）</label></li>
+    <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック （Mark after last letter of line）</label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック （Mark blank afeter letter）</label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
 </ul>
-<button id="AutoPointing" type="button" class="bottom_controls">自動チェック開始</button>
+<button id="AutoPointing" type="button" class="bottom_controls">Start</button>
 <label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">×</label>
 </div>
 </div>
