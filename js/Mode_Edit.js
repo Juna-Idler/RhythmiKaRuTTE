@@ -31,7 +31,7 @@ overlap.innerHTML = `
         </div>
     </div>
     <div class="flex_h">
-        <button id="Download" class="bottom_controls">Dwonload</button>
+        <button id="Download" class="bottom_controls">Download</button>
         <label for="EditOutputSwitch" id="EditOutputClose" class="bottom_controls">Back</label>
     </div>
 </div>
