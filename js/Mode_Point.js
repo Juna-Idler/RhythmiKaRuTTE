@@ -21,7 +21,7 @@ TagPoint.innerHTML =`
     <li><label><input type="checkbox" id="PointCheckっ" checked>「っ」にチェック</label></li>
     <li><label><input type="checkbox" id="PointCheckBlankLineHead">空行行頭にチェック （Mark "blank line" head）</label></li>
     <li><label><input type="checkbox" id="PointCheckLineTail" checked>行末文字の後ろにチェック （Mark after last letter of line）</label><label><input type="checkbox" id="PointCheckLineTail_keyup" checked>keyup</label></li>
-    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック （Mark blank afeter letter）</label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
+    <li><label><input type="checkbox" id="PointCheckWordEnd">空白の前に文字があればチェック （Mark blank after letter）</label><label><input type="checkbox" id="PointCheckWordEnd_keyup" checked>keyup</label></li>
     <li><label><input type="checkbox" id="PointCheckAlphabetSyllables">Mark alphabet syllables</label></li>
 </ul>
 <button id="AutoPointing" type="button" class="bottom_controls">Start</button>
