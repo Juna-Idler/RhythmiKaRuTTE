@@ -78,6 +78,14 @@ const phonetic_radio = document.getElementById("EditOutputPhonetic");
 standard_radio.onclick = headtag_radio.onclick = notag_radio.onclick =
 withruby_radio.onclick = noruby_radio.onclick = phonetic_radio.onclick = onchange;
 
+
+function outputTimeString(time_ms,option)
+{
+    if (option.includes("n"))
+        return "";
+    return TimeTagElement.TimeString(time_ms);
+}
+
 function standard()
 {
     outputtext.value = "";
@@ -90,48 +98,47 @@ function standard()
 
     let output = "";
     lyrics.lines.forEach(line=>{
-        if (line.start_time >= 0 && line.start_time < TimeTagElement.MaxTime_ms)
+        
+        const htt = outputTimeString(line.start_time,line.start_option);
+        if (htt != "")
         {
-            const tt = TimeTagElement.TimeString(line.start_time);
             //ルビがあると行頭にタグが来ないので重ねる
             if (line.units.length > 0 && line.units[0].hasRuby && ruby)
-                output += tt;
-            output += tt;
+                output += htt;
+            output += htt;
         }
         else
         {
             //ルビがあると行頭にタグが来ないのでルビのタグを行頭に持ってくる
             if (line.units.length > 0 && line.units[0].hasRuby && ruby)
-                output += TimeTagElement.TimeString(line.units[0].start_time);
+                output += outputTimeString(line.units[0].start_time,line.units[0].start_option);
         }
         line.units.forEach(rkunit=>{
             let phonetic = "";
             const kunit = rkunit.phonetic;
             for (let i = 0;i < kunit.text_array.length;i++)
             {
-                if (kunit.start_times[i] >= 0 && kunit.start_times[i] < TimeTagElement.MaxTime_ms)
-                    phonetic += TimeTagElement.TimeString(kunit.start_times[i]);
+                phonetic += outputTimeString(kunit.start_times[i],kunit.start_options[i]);
                 phonetic += kunit.text_array[i];
-                if (kunit.end_times[i] >= 0 && kunit.end_times[i] < TimeTagElement.MaxTime_ms)
-                    phonetic += TimeTagElement.TimeString(kunit.end_times[i]);
+                phonetic += outputTimeString(kunit.end_times[i],kunit.end_options[i]);
             }
             if (ruby)
             {
                 
-                output += rkunit.hasRuby ? (ruby_parent + TimeTagElement.TimeString(rkunit.start_time) + rkunit.base_text + TimeTagElement.TimeString(rkunit.end_time) + ruby_begin + phonetic + ruby_end) : phonetic;
+                output += rkunit.hasRuby ? (ruby_parent + outputTimeString(rkunit.start_time,rkunit.start_option) + rkunit.base_text + outputTimeString(rkunit.end_time,rkunit.end_option) + ruby_begin + phonetic + ruby_end) : phonetic;
             }
             else
             {
-                output += (rkunit.hasRuby && noruby) ? (TimeTagElement.TimeString(rkunit.start_time) + rkunit.base_text + TimeTagElement.TimeString(rkunit.end_time)) : phonetic;
+                output += (rkunit.hasRuby && noruby) ? (outputTimeString(rkunit.start_time,rkunit.start_option) + rkunit.base_text + outputTimeString(rkunit.end_time,rkunit.end_option)) : phonetic;
             }
         });
-        if (line.end_time >= 0 && line.end_time < TimeTagElement.MaxTime_ms)
+        const ttt = outputTimeString(line.end_time,line.end_option);
+        if (ttt != "")
         {
-            const tt = TimeTagElement.TimeString(line.end_time);
             //ルビがあると行末にタグが来ないので重ねる
             if (line.units.length > 0 && line.units[line.units.length-1].hasRuby && ruby)
-                output += tt;
-            output += tt;
+                output += ttt;
+            output += ttt;
         }
         output += "\n";
     });
@@ -150,10 +157,12 @@ function headtag()
 
     let output = "";
     lyrics.lines.forEach(line=>{
-        if (line.start_time >= 0 && line.start_time < TimeTagElement.MaxTime_ms)
-            output += TimeTagElement.TimeString(line.start_time);
+
+        const htt = outputTimeString(line.start_time,line.start_option);
+        if (htt)
+            output += htt;
         else if (line.units.length > 0)
-            output += TimeTagElement.TimeString(line.units[0].start_time);
+            output += outputTimeString(line.units[0].start_time,line.units[0].start_option);
 
         line.units.forEach(rkunit=>{
             const phonetic = rkunit.phonetic.text_array.join("");

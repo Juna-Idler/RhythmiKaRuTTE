@@ -95,6 +95,9 @@ class KaraokeUnit
     get start_time(){return this.start_times[0];}
     get end_time(){return this.end_times[this.end_times.length-1];}
     get text(){return this.text_array.join("");}
+    get start_option(){return this.start_options[0];}
+    get end_option(){return this.end_options[this.end_options.length-1];}
+
 
     static Parse(text)
     {
@@ -163,6 +166,9 @@ class RubyKaraokeUnit
     get end_time() {return this.phonetic.end_time;}
     set start_time(time) {this.phonetic.start_times[0] = time;}
     set end_time(time) {this.phonetic.end_times[this.phonetic.end_times.length-1] = time;}
+
+    get start_option() {return this.phonetic.start_option;}
+    get end_option() {return this.phonetic.end_option;}
 
     get hasRuby() {return this.base_text !== null;}
     get noRuby() {return this.base_text === null;}

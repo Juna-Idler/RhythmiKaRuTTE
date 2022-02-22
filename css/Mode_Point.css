@@ -66,15 +66,16 @@
     cursor:default;
 }
 
-#PointSettingSwitch
+#PointSettingSwitch, #LinePointSettingSwitch
 {
     display: none;
 }
-#PointSettingSwitch:checked ~ #PointSettingOverlap
+#PointSettingSwitch:checked ~ #PointSettingOverlap,
+#LinePointSettingSwitch:checked ~ #LinePointSettingOverlap
 {
     display: flex;
 }
-#PointSettingOverlap
+#PointSettingOverlap,#LinePointSettingOverlap
 {
     flex-direction: column;
     position: fixed;
@@ -88,12 +89,12 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.5);
 }
-#PointSettingOpen
+#PointSettingOpen, #LinePointSettingOpen
 {
     border: 1px solid gray;
 
 }
-#PointSettingClose
+#PointSettingClose, #LinePointSettingClose
 {
     position: absolute;
     right:8px;
@@ -103,7 +104,7 @@
     padding: 0 0;
 }
 
-#PointSettingPanel
+#PointSettingPanel,#LinePointSettingPanel
 {
     position: relative;
     background-color: #EEEEEE;

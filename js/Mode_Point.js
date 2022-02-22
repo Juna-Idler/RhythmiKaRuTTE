@@ -12,6 +12,7 @@ TagPoint.innerHTML =`
 </div>
 <div class="bottom_controls_area">
 <label for="PointSettingSwitch"  id="PointSettingOpen" class="bottom_controls">Auto Pointing</label>
+<label for="LinePointSettingSwitch"  id="LinePointSettingOpen" class="bottom_controls">Line Sync</label>
 </div>
 <input type="checkbox" id="PointSettingSwitch">
 <div id="PointSettingOverlap">
@@ -28,6 +29,19 @@ TagPoint.innerHTML =`
 <label for="PointSettingSwitch" id="PointSettingClose" class="bottom_controls">×</label>
 </div>
 </div>
+
+<input type="checkbox" id="LinePointSettingSwitch">
+<div id="LinePointSettingOverlap">
+<div id="LinePointSettingPanel">
+<ul>
+    <li><label><input type="checkbox" id="LinePointCheckBlankLineHead">空行にもチェック （Mark blank line）</label></li>
+    <li><label><input type="checkbox" id="LinePointCheckLineTail">行末にもチェック （Mark end of line）</label><label><input type="checkbox" id="LinePointCheckLineTail_keyup">keyup</label></li>
+</ul>
+<button id="LineAutoPointing" type="button" class="bottom_controls">Start</button>
+<label for="LinePointSettingSwitch" id="LinePointSettingClose" class="bottom_controls">×</label>
+</div>
+</div>
+
 `;
 
 const list = document.getElementById("TagPointList");
@@ -511,6 +525,41 @@ document.getElementById("AutoPointing").onclick = (e)=>{
     }
     document.getElementById("PointSettingSwitch").checked = false;
 }
+
+document.getElementById("LineAutoPointing").onclick = (e)=>{
+
+    const checkBlankLineHead = document.getElementById("LinePointCheckBlankLineHead").checked;
+    const checkLineTail = document.getElementById("LinePointCheckLineTail").checked;
+    const checkLineTail_ku = document.getElementById("LinePointCheckLineTail_keyup").checked;
+
+
+    for (let i = 0;i < list.children.length;i++)
+    {
+        const line = list.children[i];
+        const chars = line.querySelectorAll(".PointChar");
+        const markers = line.querySelectorAll(".PointMarker");
+
+
+        if (chars.length == 0)//空行
+        {
+            CheckMarker(markers[0],checkBlankLineHead);//空行行頭にチェック
+            CheckMarker(markers[markers.length-1],false);//空行行末は基本無し
+            continue;
+        }
+        if (chars[0].textContent === '@' || chars[0].textContent === '[')
+        {//行頭の"@"や"["は行ごと無視
+            continue;
+        }
+        for (let j = 0;j < markers.length;j++)
+        {
+            CheckMarker(markers[j],false);  //全部削除
+        }
+        CheckMarker(markers[1],true);
+        CheckMarker(markers[markers.length-2],checkLineTail,checkLineTail_ku);
+    }
+    document.getElementById("LinePointSettingSwitch").checked = false;
+}
+
 
 PointModeInitializer = {Initialize:Initialize,Terminalize:Terminalize};
 
